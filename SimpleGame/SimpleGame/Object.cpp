@@ -28,6 +28,22 @@ Rect::~Rect()
 {
 }
 
+void Rect::SetRect(float x, float y, float width, float height, float r, float g, float b, float a)
+{
+	m_pos.x = x;
+	m_pos.y = y;
+
+	m_width = width;
+	m_height = height;
+
+	m_color[0] = r;
+	m_color[1] = g;
+	m_color[2] = b;
+	m_color[3] = a;
+
+	st = clock();
+}
+
 void Rect::AddPosition(Point add_point, Point add_dir)
 {
 	clock_t tnow = culTime(st);

@@ -15,12 +15,21 @@ but WITHOUT ANY WARRANTY.
 
 #include "Renderer.h"
 #include "Object.h"
+#include <random>
+
+#define RECTSIZE 20
+
+using namespace std;
 
 Renderer *g_Renderer = NULL;
 
 Point dir{1, 0};
 Point pt{ 2, 2 };
 Rect rect(0, 0, 50, 50, 1, 0, 1, 1);
+bool mouse_click = false;
+
+int rectCount = 0;
+Rect bufRect[100];
 
 void RenderScene(void)
 {
@@ -38,6 +47,18 @@ void RenderScene(void)
 		rect.GetColor()[3]
 	);
 
+
+	for (int i = 0; i < rectCount; ++i) {
+		g_Renderer->DrawSolidRect(
+			bufRect[i].GetPosition().x, bufRect[i].GetPosition().y, 0,
+			bufRect[i].GetWidth(),
+			bufRect[i].GetColor()[0],
+			bufRect[i].GetColor()[1],
+			bufRect[i].GetColor()[2],
+			bufRect[i].GetColor()[3]
+		);
+		bufRect[i].AddPosition(pt, dir);
+	}
 	glutSwapBuffers();
 }
 
@@ -50,6 +71,21 @@ void Idle(void)
 
 void MouseInput(int button, int state, int x, int y)
 {
+	if ((button ==  GLUT_LEFT_BUTTON))
+	{
+		if (state == GLUT_DOWN) {
+			mouse_click = true;
+		}
+		else if (state == GLUT_UP && mouse_click == true) {
+			rectCount++;
+			
+			bufRect->SetRect(rand()%400-200, rand() % 400-200, RECTSIZE, RECTSIZE,
+				rand()%100*0.01, rand() % 100 * 0.01, rand() % 100 * 0.01, 0);
+
+			mouse_click = false;
+		}
+	}
+
 	RenderScene();
 }
 

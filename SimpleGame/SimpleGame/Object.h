@@ -24,6 +24,7 @@ public:
 	Rect(float x, float y, float width, float height, float r, float g, float b, float a);
 	~Rect();
 
+	void SetRect(float x, float y, float width, float height, float r, float g, float b, float a);
 	void SetPoint(float x, float y) { m_pos.x = x; m_pos.y = y; }
 	void SetDir(int dirX, int dirY) { dir.x = dirX; dir.y = dirY; }
 
