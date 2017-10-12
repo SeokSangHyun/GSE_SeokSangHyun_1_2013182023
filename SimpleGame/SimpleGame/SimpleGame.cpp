@@ -83,6 +83,7 @@ void SpecialKeyInput(int key, int x, int y)
 
 void TimerFunc(int timer)
 {
+	//rect.AddPosition(pt, dir);
 }
 
 
@@ -120,7 +121,7 @@ int main(int argc, char **argv)
 	glutSpecialFunc(SpecialKeyInput);
 
 	
-	glutTimerFunc(100, TimerFunc, 1);
+	glutTimerFunc(1000, TimerFunc, 1);
 	glutMainLoop();
 
 	delete g_Renderer;
