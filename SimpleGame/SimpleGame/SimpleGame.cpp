@@ -18,9 +18,9 @@ but WITHOUT ANY WARRANTY.
 
 Renderer *g_Renderer = NULL;
 
-Point dir{1, 1};
-Point pt{ 5, 5 };
-Rect rect(0, 0, 20, 20, 1, 0, 1, 1);
+Point dir{1, 0};
+Point pt{ 2, 2 };
+Rect rect(0, 0, 50, 50, 1, 0, 1, 1);
 
 void RenderScene(void)
 {
@@ -38,14 +38,13 @@ void RenderScene(void)
 		rect.GetColor()[3]
 	);
 
-
-	rect.AddPosition(pt, dir);
-
 	glutSwapBuffers();
 }
 
 void Idle(void)
 {
+
+	rect.AddPosition(pt, dir);
 	RenderScene();
 }
 
@@ -61,14 +60,23 @@ void KeyInput(unsigned char key, int x, int y)
 
 void SpecialKeyInput(int key, int x, int y)
 {
-	if (key == GLUT_KEY_RIGHT)
-		dir.x = 1 - dir.x;
-	if (key == GLUT_KEY_LEFT)
-		dir.x = dir.x - 1;
+	if (key == GLUT_KEY_RIGHT) {
+		dir.x -= -1;
+		dir.y = 0;
+	}
+	if (key == GLUT_KEY_LEFT) {
+		dir.x -= 1;
+		dir.y = 0;
+	}
 	if (key == GLUT_KEY_UP)
-		dir.y = 1 - dir.y;
-	if (key == GLUT_KEY_DOWN)
-		dir.y = dir.y - 1;
+	{
+		dir.x = 0;
+		dir.y -= -1;
+	}
+	if (key == GLUT_KEY_DOWN) {
+		dir.x = 0;
+		dir.y -= 1;
+	}
 
 	RenderScene();
 }

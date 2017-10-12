@@ -4,6 +4,7 @@
 
 Rect::Rect()
 {
+	st = clock();
 }
 
 Rect::Rect(float x, float y, float width, float height, float r, float g, float b, float a)
@@ -18,6 +19,8 @@ Rect::Rect(float x, float y, float width, float height, float r, float g, float 
 	m_color[1] = g;
 	m_color[2] = b;
 	m_color[3] = a;
+
+	st = clock();
 }
 
 
@@ -27,8 +30,9 @@ Rect::~Rect()
 
 void Rect::AddPosition(Point add_point, Point add_dir)
 {
-	m_pos.x += (add_dir.x * add_point.x);
-	m_pos.y += (add_dir.y * add_point.y);
+	clock_t tnow = culTime(st);
+	m_pos.x += (add_dir.x * add_point.x*tnow);
+	m_pos.y += (add_dir.y * add_point.y*tnow);
 
 
 	if (m_pos.x >= 300)
@@ -40,10 +44,17 @@ void Rect::AddPosition(Point add_point, Point add_dir)
 		m_pos.y = -300;
 	else if (m_pos.y <= -300)
 		m_pos.y = 300;
+
+	st = clock();
 }
 
 
 Point Rect::GetPosition()
 {
 	return m_pos;
+}
+
+clock_t Rect::culTime(clock_t st)
+{
+	return ((clock() - st)*0.1);
 }
