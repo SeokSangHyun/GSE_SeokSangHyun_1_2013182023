@@ -14,22 +14,21 @@ but WITHOUT ANY WARRANTY.
 #include "Dependencies\freeglut.h"
 
 #include "Renderer.h"
-#include "Object.h"
+#include "SceneMgr.h"
 #include <random>
 
-#define RECTSIZE 20
 
 using namespace std;
 
+SceneMgr *g_manager;
 Renderer *g_Renderer = NULL;
+
 
 Point dir{1, 0};
 Point pt{ 2, 2 };
 Rect rect(0, 0, 50, 50, 1, 0, 1, 1);
 bool mouse_click = false;
 
-int rectCount = 0;
-Rect bufRect[100];
 
 void RenderScene(void)
 {
@@ -46,26 +45,24 @@ void RenderScene(void)
 		rect.GetColor()[2],
 		rect.GetColor()[3]
 	);
+	g_manager->Update();
 
 
-	for (int i = 0; i < rectCount; ++i) {
-		g_Renderer->DrawSolidRect(
-			bufRect[i].GetPosition().x, bufRect[i].GetPosition().y, 0,
-			bufRect[i].GetWidth(),
-			bufRect[i].GetColor()[0],
-			bufRect[i].GetColor()[1],
-			bufRect[i].GetColor()[2],
-			bufRect[i].GetColor()[3]
-		);
-		bufRect[i].AddPosition(pt, dir);
-	}
 	glutSwapBuffers();
 }
 
+/////////////////////////////////////
+void Update(void)
+{
+	rect.AddPositionK(pt, dir);
+	g_manager->Update();
+}
+/////////////////////////////////////
+
 void Idle(void)
 {
+	Update();
 
-	rect.AddPosition(pt, dir);
 	RenderScene();
 }
 
@@ -77,12 +74,11 @@ void MouseInput(int button, int state, int x, int y)
 			mouse_click = true;
 		}
 		else if (state == GLUT_UP && mouse_click == true) {
-			rectCount++;
 			
-			bufRect[rectCount].SetRect(rand()%400-200, rand() % 400-200, RECTSIZE, RECTSIZE,
-				rand()%100*0.01, rand() % 100 * 0.01, rand() % 100 * 0.01, 0);
+			g_manager->Create(x, y, RECTSIZE, RECTSIZE, 1,1,1,0);
 
 			mouse_click = false;
+			rectCount++;
 		}
 	}
 
@@ -130,7 +126,7 @@ int main(int argc, char **argv)
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(0, 0);
-	glutInitWindowSize(500, 500);
+	glutInitWindowSize(WIN_WIDTH, WIN_HEIGHT);
 	glutCreateWindow("Game Software Engineering KPU");
 
 	glewInit();
@@ -156,7 +152,6 @@ int main(int argc, char **argv)
 	glutMouseFunc(MouseInput);
 	glutSpecialFunc(SpecialKeyInput);
 
-	
 	glutTimerFunc(1000, TimerFunc, 1);
 	glutMainLoop();
 
