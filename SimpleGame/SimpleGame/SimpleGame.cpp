@@ -79,7 +79,7 @@ void MouseInput(int button, int state, int x, int y)
 		else if (state == GLUT_UP && mouse_click == true) {
 			rectCount++;
 			
-			bufRect->SetRect(rand()%400-200, rand() % 400-200, RECTSIZE, RECTSIZE,
+			bufRect[rectCount].SetRect(rand()%400-200, rand() % 400-200, RECTSIZE, RECTSIZE,
 				rand()%100*0.01, rand() % 100 * 0.01, rand() % 100 * 0.01, 0);
 
 			mouse_click = false;
