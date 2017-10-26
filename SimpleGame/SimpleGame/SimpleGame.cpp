@@ -13,7 +13,6 @@ but WITHOUT ANY WARRANTY.
 #include "Dependencies\glew.h"
 #include "Dependencies\freeglut.h"
 
-#include "Renderer.h"
 #include "SceneMgr.h"
 #include <random>
 
@@ -21,12 +20,8 @@ but WITHOUT ANY WARRANTY.
 using namespace std;
 
 SceneMgr *g_manager;
-Renderer *g_Renderer = NULL;
+DWORD st = 0, ed;
 
-
-Point dir{1, 0};
-Point pt{ 2, 2 };
-Rect rect(0, 0, 50, 50, 1, 0, 1, 1);
 bool mouse_click = false;
 
 
@@ -36,34 +31,26 @@ void RenderScene(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.0f, 0.3f, 0.3f, 1.0f);
 
-	// Renderer Test
-	g_Renderer->DrawSolidRect(
-		rect.GetPosition().x, rect.GetPosition().y, 0,
-		rect.GetWidth(),
-		rect.GetColor()[0],
-		rect.GetColor()[1],
-		rect.GetColor()[2],
-		rect.GetColor()[3]
-	);
-	g_manager->Update();
 
-
+	g_manager->Render();
 	glutSwapBuffers();
 }
 
 /////////////////////////////////////
-void Update(void)
+void Update(float time)
 {
-	rect.AddPositionK(pt, dir);
-	g_manager->Update();
+	g_manager->Update(time);
 }
 /////////////////////////////////////
 
 void Idle(void)
 {
-	Update();
+	ed = timeGetTime() - st;
+	st = timeGetTime();
 
+	Update((float)ed);
 	RenderScene();
+
 }
 
 void MouseInput(int button, int state, int x, int y)
@@ -75,10 +62,13 @@ void MouseInput(int button, int state, int x, int y)
 		}
 		else if (state == GLUT_UP && mouse_click == true) {
 			
-			g_manager->Create(x, y, RECTSIZE, RECTSIZE, 1,1,1,0);
+			g_manager->Create(x - (WIN_WIDTH*0.5), (WIN_HEIGHT*0.5) - y,
+				RECTSIZE, RECTSIZE,
+				rand() % OBJ_SPEED, rand() % OBJ_SPEED,
+				rand() % 2 - 2, rand() % 2 - 2,
+				1,1,1,0);
 
 			mouse_click = false;
-			rectCount++;
 		}
 	}
 
@@ -92,7 +82,7 @@ void KeyInput(unsigned char key, int x, int y)
 
 void SpecialKeyInput(int key, int x, int y)
 {
-	if (key == GLUT_KEY_RIGHT) {
+	/*if (key == GLUT_KEY_RIGHT) {
 		dir.x -= -1;
 		dir.y = 0;
 	}
@@ -108,7 +98,7 @@ void SpecialKeyInput(int key, int x, int y)
 	if (key == GLUT_KEY_DOWN) {
 		dir.x = 0;
 		dir.y -= 1;
-	}
+	}*/
 
 	RenderScene();
 }
@@ -131,21 +121,13 @@ int main(int argc, char **argv)
 
 	glewInit();
 	if (glewIsSupported("GL_VERSION_3_0"))
-	{
 		std::cout << " GLEW Version is 3.0\n ";
-	}
 	else
-	{
 		std::cout << "GLEW 3.0 not supported\n ";
-	}
 
-	// Initialize Renderer
-	g_Renderer = new Renderer(500, 500);
-	if (!g_Renderer->IsInitialized())
-	{
-		std::cout << "Renderer could not be initialized.. \n";
-	}
 
+	g_manager = new SceneMgr;
+	
 	glutDisplayFunc(RenderScene);
 	glutIdleFunc(Idle);
 	glutKeyboardFunc(KeyInput);
@@ -155,8 +137,8 @@ int main(int argc, char **argv)
 	glutTimerFunc(1000, TimerFunc, 1);
 	glutMainLoop();
 
-	delete g_Renderer;
 
+	g_manager->Release();
     return 0;
 }
 
