@@ -4,6 +4,7 @@
 
 #include <Windows.h>
 #include <stdio.h>
+#include <time.h>
 #include <tchar.h>
 #include "Renderer.h"
 
@@ -11,4 +12,10 @@
 #define WIN_HEIGHT 500
 #define RECTSIZE 20
 #define MAX_OBJECTSCOUNT 10
-#define OBJ_SPEED 20
+#define OBJ_SPEED 200
+#define OBJ_LIFE 20
+
+	enum {OBJ_BUILDING,
+	OBJ_CHARACTER,
+	OBJ_BULLET,
+	OBJ_ARROW};

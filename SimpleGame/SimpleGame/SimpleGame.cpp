@@ -40,6 +40,7 @@ void RenderScene(void)
 void Update(float time)
 {
 	g_manager->Update(time);
+	g_manager->Timer(time);
 }
 /////////////////////////////////////
 
@@ -57,6 +58,8 @@ void MouseInput(int button, int state, int x, int y)
 {
 	if ((button ==  GLUT_LEFT_BUTTON))
 	{
+
+		//
 		if (state == GLUT_DOWN) {
 			mouse_click = true;
 		}
@@ -70,8 +73,9 @@ void MouseInput(int button, int state, int x, int y)
 
 			mouse_click = false;
 		}
-	}
+		//
 
+	}
 	RenderScene();
 }
 
@@ -82,30 +86,12 @@ void KeyInput(unsigned char key, int x, int y)
 
 void SpecialKeyInput(int key, int x, int y)
 {
-	/*if (key == GLUT_KEY_RIGHT) {
-		dir.x -= -1;
-		dir.y = 0;
-	}
-	if (key == GLUT_KEY_LEFT) {
-		dir.x -= 1;
-		dir.y = 0;
-	}
-	if (key == GLUT_KEY_UP)
-	{
-		dir.x = 0;
-		dir.y -= -1;
-	}
-	if (key == GLUT_KEY_DOWN) {
-		dir.x = 0;
-		dir.y -= 1;
-	}*/
 
 	RenderScene();
 }
 
 void TimerFunc(int timer)
 {
-	//rect.AddPosition(pt, dir);
 }
 
 
@@ -113,6 +99,7 @@ int main(int argc, char **argv)
 {
 
 	// Initialize GL things
+	srand((unsigned)time(NULL));
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(0, 0);
@@ -134,7 +121,7 @@ int main(int argc, char **argv)
 	glutMouseFunc(MouseInput);
 	glutSpecialFunc(SpecialKeyInput);
 
-	glutTimerFunc(1000, TimerFunc, 1);
+	glutTimerFunc(500, TimerFunc, 1);
 	glutMainLoop();
 
 
