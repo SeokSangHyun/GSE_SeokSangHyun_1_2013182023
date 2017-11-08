@@ -12,6 +12,7 @@
 #define WIN_HEIGHT 500
 #define RECTSIZE 20
 #define MAX_OBJECTSCOUNT 10
+#define MAX_BULLETCOUNT 100
 #define OBJ_SPEED 200
 #define OBJ_LIFE 20
 

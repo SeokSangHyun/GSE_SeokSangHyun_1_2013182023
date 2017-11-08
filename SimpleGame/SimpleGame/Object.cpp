@@ -121,5 +121,9 @@ void Rect::Delete()
 	m_color[0]	= 0; m_color[1]	= 0; m_color[2]	= 0; m_color[3]	= 0;
 	m_flag	= false;
 	m_iLifeTime= 0;
-	
+}
+
+void Rect::Update(float time)
+{
+	AddPosition(time);
 }

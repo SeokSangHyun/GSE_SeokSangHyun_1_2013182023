@@ -21,7 +21,6 @@ class Rect
 	float		m_width;
 	float		m_height;
 	float		m_color[4];
-
 	int			m_state;
 public:
 	Rect();
@@ -45,10 +44,9 @@ public:
 	float GetHeight()				{ return m_height; }
 	Point GetDir()					{ return m_dir; }
 	float* GetColor()				{ return m_color; }
-	float GetFlag()					{ return m_flag; }
+	bool GetFlag()					{ return m_flag; }
 	int GetLife()					{ return m_iLifeTime; }
 	bool GetColFlag()				{ return m_colFlag; }
-
 
 	void Draw(Renderer *renderer);
 	void ReduceLife(int damage)		{ m_iLifeTime -= damage; }
@@ -57,5 +55,6 @@ public:
 	void SetColFlagTrue() { m_colFlag = true; };
 	void SetColFlagFalse() { m_colFlag = false; };
 	void Delete();
+	void Update(float stime);
 };
 

@@ -7,9 +7,9 @@ class SceneMgr
 	Renderer *m_rRenderer;
 
 	Rect 		*m_rpObject;
-	Rect		*m_bpObject, *m_bbpObject;
+	Rect		*m_bpObject, *m_cpObject;
 	int			m_iRectDelCount, m_iRectCount;
-	int			m_iReduceRate;
+	double		m_iReduceRate;
 	int			m_iBulletCount, m_iBulletDelCount;
 public:
 	SceneMgr();
@@ -27,7 +27,9 @@ public:
 	/*
 	*/
 	void Timer(float time);
-	void Collide(int i);
+	void CollidePBtwP(int i);
+	void CollidePBtwB(int i);
+	void CollidePBtwC(int i);
 	void Release();
 };
 
