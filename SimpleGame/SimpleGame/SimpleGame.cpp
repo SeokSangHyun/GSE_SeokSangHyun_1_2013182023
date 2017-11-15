@@ -66,10 +66,7 @@ void MouseInput(int button, int state, int x, int y)
 		else if (state == GLUT_UP && mouse_click == true) {
 			
 			g_manager->Create(x - (WIN_WIDTH*0.5), (WIN_HEIGHT*0.5) - y,
-				RECTSIZE, RECTSIZE,
-				rand() % OBJ_SPEED, rand() % OBJ_SPEED,
-				rand() % 2 - 2, rand() % 2 - 2,
-				1,1,1,0);
+				RECTSIZE, RECTSIZE);
 
 			mouse_click = false;
 		}

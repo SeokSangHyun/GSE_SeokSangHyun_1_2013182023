@@ -5,31 +5,31 @@
 class SceneMgr
 {
 	Renderer *m_rRenderer;
+	float col[2][4];
 
 	Rect 		*m_rpObject;
 	Rect		*m_bpObject, *m_cpObject;
-	int			m_iRectDelCount, m_iRectCount;
 	double		m_iReduceRate;
+
+	int			m_iRectDelCount, m_iRectCount;
 	int			m_iBulletCount, m_iBulletDelCount;
+	int			m_iArrowCount, m_iArrowDelCount;
+
 public:
 	SceneMgr();
 	~SceneMgr();
 
-	void Create(float x, float y, float width, float height,
-		float spdX, float spdY, int dirX, int dirY,
-		float r, float g, float b, float a);
-	void CreateBullet(float x, float y, float width, float height,
-		float spdX, float spdY, int dirX, int dirY,
-		float r, float g, float b, float a);
+	void Create(float x, float y, float width, float height);
+	void CreateShoot();
+	void CreateArrow(int i, float time);
 	void Update(float time);
 	void Render();
 	
 	/*
 	*/
 	void Timer(float time);
-	void CollidePBtwP(int i);
-	void CollidePBtwB(int i);
-	void CollidePBtwC(int i);
+	bool Collide(Rect *temp,Rect *col);
+	void CollideArrow(int i);
 	void Release();
 };
 
