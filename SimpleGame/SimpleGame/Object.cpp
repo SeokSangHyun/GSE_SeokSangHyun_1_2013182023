@@ -69,6 +69,11 @@ void Rect::SetArrow(int type, float time)
 	}
 }
 
+void Rect::SetTextImage(Renderer *renderer, char *name)
+{
+	m_texCharacter = renderer->CreatePngTexture(name);
+}
+
 void Rect::SetRect(float x, float y, float width, float height,
 	float spdX, float spdY, float dirX, float dirY,
 	float r, float g, float b, float a, int life, int type)
@@ -113,6 +118,12 @@ void Rect::Draw(Renderer * renderer)
 			}
 		}
 	}
+}
+
+void Rect::DrawImg(Renderer * renderer)
+{
+	renderer->DrawTexturedRect(m_pos.x, m_pos.y, 0, m_width,
+		m_color[0], m_color[1], m_color[2], m_color[3], m_texCharacter);
 }
 
 void Rect::AddPosition(float tnow)

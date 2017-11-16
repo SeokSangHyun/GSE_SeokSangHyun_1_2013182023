@@ -8,8 +8,6 @@ SceneMgr::SceneMgr()
 	m_bpObject = new Rect[MAX_BULLETCOUNT]{ Rect(0,0,0,0,  0,0,0,0,  0,0,0,0,0,0) };
 
 	m_cpObject = new Rect;
-	m_cpObject->SetRect(0, 0, 80, 80, 0, 0, 0, 0,
-		0.0, 1.0, 1.0, 1, 500, OBJ_BUILDING);
 
 	col[0][0] = 1.0f; col[0][1] = 0.0f; col[0][2] = 0.0f; col[0][3] = 1.0f;
 	col[1][0] = 1.0f; col[1][1] = 1.0f; col[1][2] = 1.0f; col[1][3] = 1.0f;
@@ -26,6 +24,10 @@ SceneMgr::SceneMgr()
 	m_rRenderer				= new Renderer{ 500, 500 };
 	if (!m_rRenderer->IsInitialized())
 		std::cout << "Renderer could not be initialized.. \n";
+
+	m_cpObject->SetRect(0, 0, 80, 80, 0, 0, 0, 0,
+		0.0, 1.0, 1.0, 1, 500, OBJ_BUILDING);
+	m_cpObject->SetTextImage(m_rRenderer, "./Img/building.png");
 }
 
 SceneMgr::~SceneMgr()
@@ -186,6 +188,7 @@ void SceneMgr::Render()
 	if (m_cpObject->GetFlag()) 
 	{
 		m_cpObject->Draw(m_rRenderer);
+		m_cpObject->DrawImg(m_rRenderer);
 	}
 }
 
