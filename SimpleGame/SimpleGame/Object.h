@@ -8,12 +8,13 @@ struct Point {
 	float y;
 };
 
-struct Arrow {
+struct ShootObj {
 	Point pt;
 	Point dir;
 	Point speed;
 	bool flag;
 	int state;
+	float color[4];
 };
 
 class Rect
@@ -22,6 +23,7 @@ class Rect
 	Point		m_dir;
 	Point		m_speed;
 
+	int			m_team;
 	int			m_iLifeTime;
 	bool		m_flag; // 존재하는지 아닌지
 	bool		m_colFlag;
@@ -30,8 +32,10 @@ class Rect
 	float		m_height;
 	int			m_state;
 
-	Arrow		m_arrow[MAX_ARROW];
-	float		actTime;
+	ShootObj	*m_shotObj;
+	float		actTime;	//생성시간
+	float		m_coolTime; //슈퍼아머 쿨타임
+
 
 	//텍스처
 	float		m_color[4];
@@ -43,8 +47,8 @@ public:
 	~Rect();
 
 	void SetRect(float x, float y, float width, float height, float spdX, float spdY,
-		float dirX, float dirY, float r, float g, float b, float a, int life, int type);
-	void SetArrow(int type, float time);
+		float dirX, float dirY, float r, float g, float b, float a, int life, int type, int team);
+	void SetShotObj(int type, float r, float g, float b, float cooltime, float time);
 	void SetTextImage(Renderer *renderer, char *name);
 	void SetPoint(float x, float y) { m_pos.x = x; m_pos.y = y; }
 	void SetColor(float *col)		{ m_color[0] = col[0]; m_color[1] = col[1];
@@ -54,25 +58,31 @@ public:
 
 
 	Point GetPosition();
-	Arrow* GetArrow(int n)			{ return &m_arrow[n]; }
+	Point GetShotPosition(int i)	{ return m_shotObj[i].pt; };
+	ShootObj* GetShotObj(int n)		{ return &m_shotObj[n]; }
 	GLuint GetTexcharacter()		{ return m_texCharacter; }
 	float GetWidth()				{ return m_width; }
 	float GetHeight()				{ return m_height; }
 	float* GetColor()				{ return m_color; }
 	int GetLife()					{ return m_iLifeTime; }
 	bool GetFlag()					{ return m_flag; }
+	bool GetShotFlag(int i)			{ return m_shotObj[i].flag; }
 	bool GetColFlag()				{ return m_colFlag; }
+	int	GetState()					{ return m_state; };
 
 	void Draw(Renderer *renderer);
 	void DrawImg(Renderer *renderer);
 	void ReduceLife(int damage)		{ m_iLifeTime -= damage; }
 
+	bool CollideObject(Rect *col);
+	bool CollideShotObject(Point *col);
+
 	void AddPosition(float tnow);
-	void AddArrowPosition(float tnow);
-	void SuperArmer(float time);
+	void AddShotObjPosition(float tnow);
+	void SuperArmer(float cooltime, float time);
 
 	void Delete();
-	void DeleteArrow(int n);
+	void DeleteShotObj(int n);
 	void Update(float stime);
 };
 

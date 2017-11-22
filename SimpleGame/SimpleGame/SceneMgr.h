@@ -7,20 +7,20 @@ class SceneMgr
 	Renderer *m_rRenderer;
 	float col[2][4];
 
-	Rect 		*m_rpObject;
-	Rect		*m_bpObject, *m_cpObject;
-	double		m_iReduceRate;
+	Rect 		*m_rpRedObject[MAX_OBJECTSCOUNT], *m_cpRedObject[3];
+	Rect		*m_rpBlueObject[MAX_OBJECTSCOUNT], *m_cpBlueObject[3];
 
-	int			m_iRectDelCount, m_iRectCount;
-	int			m_iBulletCount, m_iBulletDelCount;
-	int			m_iArrowCount, m_iArrowDelCount;
+	double		m_dBlueCreateTime;
+	double		m_dCreateTime;
+	bool		m_bCreate;
 
 public:
 	SceneMgr();
 	~SceneMgr();
 
-	void Create(float x, float y, float width, float height);
-	void CreateShoot();
+	void RedCreate(float x, float y, float width, float height, int team);
+	void BlueCreate();
+	void CreateShoot(int i, float time);
 	void CreateArrow(int i, float time);
 	void Update(float time);
 	void Render();
@@ -29,7 +29,7 @@ public:
 	*/
 	void Timer(float time);
 	bool Collide(Rect *temp,Rect *col);
-	void CollideArrow(int i);
+	bool CollideShotObj(Rect * temp, Rect * col);
 	void Release();
 };
 

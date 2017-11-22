@@ -22,7 +22,9 @@ using namespace std;
 SceneMgr *g_manager;
 DWORD st = 0, ed;
 
+float temp_time = 0;
 bool mouse_click = false;
+
 
 
 void RenderScene(void)
@@ -39,6 +41,7 @@ void RenderScene(void)
 /////////////////////////////////////
 void Update(float time)
 {
+
 	g_manager->Update(time);
 	g_manager->Timer(time);
 }
@@ -58,17 +61,18 @@ void MouseInput(int button, int state, int x, int y)
 {
 	if ((button ==  GLUT_LEFT_BUTTON))
 	{
-
 		//
-		if (state == GLUT_DOWN) {
-			mouse_click = true;
+		if (state == GLUT_DOWN)
+		{
+				mouse_click = true;
 		}
-		else if (state == GLUT_UP && mouse_click == true) {
+		else if (state == GLUT_UP && mouse_click == true
+			&& y > WIN_HEIGHT*0.5) {
+			std::cout << x << ", " << y << std::endl;
+			std::cout << x - (WIN_WIDTH*0.5) << ", " << (WIN_HEIGHT*0.5) - y << std::endl;
 			
-			g_manager->Create(x - (WIN_WIDTH*0.5), (WIN_HEIGHT*0.5) - y,
-				RECTSIZE, RECTSIZE);
-
-			mouse_click = false;
+			g_manager->RedCreate(x - (WIN_WIDTH*0.5), (WIN_HEIGHT*0.5) - y,
+				RECTSIZE, RECTSIZE, BlueTeam);
 		}
 		//
 
@@ -94,7 +98,6 @@ void TimerFunc(int timer)
 
 int main(int argc, char **argv)
 {
-
 	// Initialize GL things
 	srand((unsigned)time(NULL));
 	glutInit(&argc, argv);

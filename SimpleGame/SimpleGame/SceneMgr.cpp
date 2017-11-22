@@ -4,85 +4,86 @@
 
 SceneMgr::SceneMgr()
 {
-	m_rpObject = new Rect[MAX_OBJECTSCOUNT]{ Rect(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) };
-	m_bpObject = new Rect[MAX_BULLETCOUNT]{ Rect(0,0,0,0,  0,0,0,0,  0,0,0,0,0,0) };
-
-	m_cpObject = new Rect;
-
 	col[0][0] = 1.0f; col[0][1] = 0.0f; col[0][2] = 0.0f; col[0][3] = 1.0f;
 	col[1][0] = 1.0f; col[1][1] = 1.0f; col[1][2] = 1.0f; col[1][3] = 1.0f;
-
-	m_iRectCount			= 0;
-	m_iRectDelCount			= 0;
-
-	m_iBulletCount			= 0;
-	m_iBulletDelCount		= 0;
-
-	m_iArrowCount			= 0;
-	m_iArrowDelCount		= 0;
-
-	m_rRenderer				= new Renderer{ 500, 500 };
+	m_bCreate = false;
+	m_dBlueCreateTime = 0;
+	m_dCreateTime = 0;
+	m_rRenderer				= new Renderer{ WIN_WIDTH, WIN_HEIGHT };
 	if (!m_rRenderer->IsInitialized())
 		std::cout << "Renderer could not be initialized.. \n";
 
-	m_cpObject->SetRect(0, 0, 80, 80, 0, 0, 0, 0,
-		0.0, 1.0, 1.0, 1, 500, OBJ_BUILDING);
-	m_cpObject->SetTextImage(m_rRenderer, "./Img/building.png");
+	//////
+
+	//플레이어
+	for (int i = 0; i < MAX_OBJECTSCOUNT; ++i)
+	{
+		m_rpRedObject[i] = new Rect( 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, OBJ_CHARACTER);
+		m_rpBlueObject[i] = new Rect(0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, OBJ_CHARACTER);
+	}
+
+	//캐슬
+	for (int i = 0; i < 3; ++i) {
+		m_cpRedObject[i] = new Rect{ Rect(0,0,0,0,  0,0,0,0,  0,0,0,0,0,OBJ_BUILDING) };
+		m_cpRedObject[i]->SetRect(WIN_WIDTH*0.25f*(i + 1) - WIN_WIDTH*0.5, -WIN_HEIGHT*0.5 + 100, 100, 100,
+			0, 0, 0, 0, 1.0, 0.0, 0.0, 1, 500, OBJ_BUILDING, RedTeam);
+		m_cpRedObject[i]->SetTextImage(m_rRenderer, "./Img/building1.png");
+
+		m_cpBlueObject[i] = new Rect{ Rect(0,0,0,0,  0,0,0,0,  0,0,0,0,0,OBJ_BUILDING) };
+		m_cpBlueObject[i]->SetRect(WIN_WIDTH*0.25f*(i + 1) - WIN_WIDTH*0.5, WIN_HEIGHT*0.5 - 100, 100, 100,
+			0, 0, 0, 0, 0.0, 0.0, 1.0, 1, 500, OBJ_BUILDING, BlueTeam);
+		m_cpBlueObject[i]->SetTextImage(m_rRenderer, "./Img/building.png");
+	}
 }
 
 SceneMgr::~SceneMgr()
 {}
 
-void SceneMgr::Create(float x, float y, float width, float height)
+void SceneMgr::RedCreate(float x, float y, float width, float height, int team)
 {
-	if (m_iRectCount < MAX_OBJECTSCOUNT)
-	{
-		if (m_rpObject[m_iRectCount].GetFlag() == false) {
-			m_rpObject[m_iRectCount].SetRect(x, y, width, height,
-				rand() % OBJ_SPEED, rand() % OBJ_SPEED,
-				(rand() % 2 - 2), (rand() % 2 - 2), 1, 1, 1, 1, OBJ_LIFE, OBJ_CHARACTER);
-			m_iRectCount++;
-		}
-	}
-	else if (m_iRectDelCount > 0)
+	if (m_bCreate == true)
 	{
 		for (int i = 0; i < MAX_OBJECTSCOUNT; ++i)
-			if (m_rpObject[i].GetFlag() == false) {
-				m_rpObject[i].SetRect(x, y, width, height,
-					rand() % OBJ_SPEED, rand() % OBJ_SPEED,
-					(rand() % 2 - 2), (rand() % 2 - 2), 1, 1, 1, 1, OBJ_LIFE, OBJ_CHARACTER);
+			if (m_rpRedObject[i]->GetFlag() == false)
+			{
+				m_rpRedObject[i]->SetRect(x, y, width, height,
+					rand() % OBJ_SPEED - OBJ_SPEED*0.5, rand() % OBJ_SPEED - OBJ_SPEED*0.5,
+					(rand() % 2 - 2), (rand() % 2 - 2), 1, 0, 0, 1, OBJ_LIFE, OBJ_CHARACTER, RedTeam);
+				m_bCreate = false;
 				return;
 			}
 	}
 }
 
-void SceneMgr::CreateShoot()
+void SceneMgr::BlueCreate()
 {
-	if (m_iBulletCount < MAX_BULLETCOUNT)
-	{
-		m_bpObject[m_iBulletCount].SetRect(0, 0, 10, 10, 300, 300,
-			((rand() % 100 + 1)* 0.01) - 0.5, ((rand() % 100 + 1)*0.01) - 0.5,
-			1, 0, 0, 1, 1, OBJ_BULLET);
-		m_iBulletCount++;
-	}
-	else if (m_iBulletDelCount>0)
-	{
-		for (int i = 0; i < MAX_BULLETCOUNT; ++i)
+	for (int i = 0; i < MAX_OBJECTSCOUNT; ++i)
+		if (m_rpBlueObject[i]->GetFlag() == false)
 		{
-			if (m_bpObject[i].GetFlag()==false) {
-				m_bpObject[i].SetRect(0, 0, 10, 10, 300, 300,
-					((rand() % 100 + 1)* 0.01) - 0.5, ((rand() % 100 + 1)*0.01) - 0.5,
-					1, 0, 0, 1, 1, OBJ_BULLET);
-				m_iBulletDelCount--;
-				return;
-			}
+			m_rpBlueObject[i]->SetRect(rand()%WIN_WIDTH - WIN_WIDTH*0.5, rand() % (int)(WIN_HEIGHT*0.5), RECTSIZE, RECTSIZE,
+				rand() % OBJ_SPEED - OBJ_SPEED*0.5, rand() % OBJ_SPEED - OBJ_SPEED*0.5,
+				(rand() % 2 - 2), (rand() % 2 - 2), 0, 0, 1, 1, OBJ_LIFE, OBJ_CHARACTER, BlueTeam);
+			return;
 		}
-	}
+}
+
+void SceneMgr::CreateShoot(int i, float time)
+{
+	if (m_cpRedObject[i]->GetFlag() == true)
+		m_cpRedObject[i]->SetShotObj(OBJ_BULLET,1, 0, 0, COOLBULLET, time);
+	if (m_cpBlueObject[i]->GetFlag() == true)
+		m_cpBlueObject[i]->SetShotObj(OBJ_BULLET, 0, 0, 1, COOLBULLET, time);
 }
 
 void SceneMgr::CreateArrow(int i, float time)
 {
-	m_rpObject[i].SetArrow(OBJ_ARROW + i, time);
+	if(m_rpRedObject[i]->GetFlag() == true)
+		m_rpRedObject[i]->SetShotObj(OBJ_ARROW, 0.5, 0.2, 0.7, COOLARROW, time);
+
+	if (m_rpBlueObject[i]->GetFlag() == true)
+		m_rpBlueObject[i]->SetShotObj(OBJ_ARROW, 1, 1, 0, COOLARROW, time);
 }
 
 
@@ -90,168 +91,222 @@ void SceneMgr::CreateArrow(int i, float time)
 void SceneMgr::Update(float time)
 {
 	int count = 0;
-	/*	
+
+	/*
 		player -> player	충돌체크
 		castle -> plqy		충돌체크
 		play   -> arrow		충돌체크
 		play   -> bullet	충돌체크
 	*/
-	for (int i = 0 ; i < MAX_OBJECTSCOUNT; ++i)
+	//플레이어
+	for (int i = 0; i < MAX_OBJECTSCOUNT; ++i)
 	{
-		//플레이어
-		for (int j = 0 ; j < MAX_OBJECTSCOUNT; ++j)
+
+		for (int j = 0; j < MAX_OBJECTSCOUNT; ++j)
 		{
-			if (m_rpObject[i].GetFlag() && m_rpObject[i].GetFlag()
-				&& i!=j && m_rpObject[i].GetColFlag() == false)
+			if (m_rpRedObject[i]->GetFlag() == true
+				&& m_rpBlueObject[j]->GetFlag() == true)
 			{
-				if (Collide(&m_rpObject[i], &m_rpObject[j]))
+				//플레이어
+				if (m_rpRedObject[i]->GetColFlag() == false
+					&& Collide(m_rpRedObject[i], m_rpBlueObject[j]))
 				{
-					m_rpObject[i].SetColFlagTrue();
-					m_rpObject[i].ReduceLife(1);
+					m_rpRedObject[i]->ReduceLife(10);
+					m_rpBlueObject[j]->ReduceLife(10);
 				}
+				//화살
+				if (m_rpRedObject[i]->GetColFlag() == false
+					&& CollideShotObj(m_rpRedObject[i], m_rpBlueObject[j]))
+				{
+					m_rpRedObject[i]->ReduceLife(10);
+				}
+				if (m_rpBlueObject[i]->GetColFlag() == false
+					&& CollideShotObj(m_rpBlueObject[i], m_rpRedObject[j]))
+				{
+					m_rpBlueObject[j]->ReduceLife(10);
+				}
+
 			}
 		}
+
 		
-		//총알
-		for (int j = 0; j < MAX_BULLETCOUNT; ++j)
+		for (int j = 0; j < 3; ++j)
 		{
-			if ( m_bpObject[j].GetFlag() )
+			if (m_rpRedObject[i]->GetFlag() == true
+				&& m_cpBlueObject[j]->GetFlag() == true)
 			{
-				if (Collide(&m_rpObject[i], &m_bpObject[j]))
+				//캐슬
+				if (m_cpBlueObject[j]->GetColFlag() == false
+					&& Collide(m_rpRedObject[i], m_cpBlueObject[j]))
 				{
-					m_rpObject[i].ReduceLife(5);
-					m_bpObject[j].Delete();
-					m_iBulletDelCount++;
+					m_cpBlueObject[j]->ReduceLife(m_rpRedObject[i]->GetLife());
+					m_rpRedObject[i]->Delete();
+				}
+				//화살
+				if (CollideShotObj(m_cpBlueObject[j], m_rpRedObject[i]))
+				{
+					m_cpRedObject[j]->ReduceLife(5);
+				}
+			}
+
+			//
+			if (m_rpBlueObject[i]->GetFlag() == true
+				&& m_cpRedObject[j]->GetFlag() == true)
+			{
+				//캐슬
+				if (m_cpRedObject[j]->GetColFlag() == false
+					&& Collide(m_rpBlueObject[i], m_cpRedObject[j]))
+				{
+					m_cpRedObject[j]->ReduceLife(m_rpBlueObject[i]->GetLife());
+					m_rpBlueObject[i]->Delete();
+				}
+				if (CollideShotObj(m_cpRedObject[j], m_rpBlueObject[i]))
+				{
+					m_cpRedObject[j]->ReduceLife(5);
 				}
 			}
 		}
-		//화살
-		CollideArrow(i);
-		//캐슬
-		if (m_rpObject[i].GetFlag())
+
+		//플레이어 이동
+		if (m_rpRedObject[i]->GetFlag() == true)
 		{
-			if (Collide(m_cpObject, &m_rpObject[i])
-				&& m_cpObject->GetColFlag() == false) {
-				m_cpObject->SetColFlagTrue();
-				m_cpObject->ReduceLife(m_rpObject[i].GetLife());
+			m_rpRedObject[i]->Update(time);
+			if (m_rpRedObject[i]->GetLife() <= 0)
+				m_rpRedObject[i]->Delete();
+		}
+		if (m_rpBlueObject[i]->GetFlag() == true)
+		{
+			m_rpBlueObject[i]->Update(time);
+			if (m_rpBlueObject[i]->GetLife() <= 0)
+				m_rpBlueObject[i]->Delete();
+		}
+	}
+
+
+	for (int i = 0; i < 3; ++i)
+	{
+		for (int j = 0; j < 3; ++j)
+		{
+			if (m_cpRedObject[i]->GetFlag() == true
+				&& m_cpBlueObject[j]->GetFlag() == true)
+			{
+				if (CollideShotObj(m_cpRedObject[i], m_cpBlueObject[j]))
+					m_cpRedObject[i]->ReduceLife(10);
+				if(CollideShotObj(m_cpBlueObject[i], m_cpRedObject[j]))
+					m_cpBlueObject[i]->ReduceLife(10);
 			}
 		}
-
-
-		//슈퍼아머 체크
-		m_rpObject[i].SuperArmer(time);
-		m_cpObject->SuperArmer(time);
-
-
-		//업데이트
-		if (m_rpObject[i].GetLife() < 0)
-		{
-			m_rpObject[i].Delete();
-			m_iRectDelCount++;
-		}
-		m_rpObject[i].Update(time);
+		m_cpRedObject[i]->Update(time);
+		m_cpBlueObject[i]->Update(time);
+		if (m_cpRedObject[i]->GetLife() <= 0)
+			m_cpRedObject[i]->Delete();
+		if (m_cpBlueObject[i]->GetLife() <= 0)
+			m_cpBlueObject[i]->Delete();
 	}
 
-	for (int i = 0; i < MAX_BULLETCOUNT; ++i)
-	{
-		if (m_bpObject[i].GetFlag()) {
-			m_bpObject[i].Update(time);
-			count++;
-		}
-	}
-	
-	if (m_cpObject->GetFlag() && m_cpObject->GetLife() < 0)
-		m_cpObject->Delete();
 }
 
 
 void SceneMgr::Render()
 {
-	//불릿
-	for (int i = 0; i < MAX_BULLETCOUNT; ++i)
-	{
-		if (m_bpObject[i].GetFlag())
-		{
-			m_bpObject[i].Draw(m_rRenderer);
-		}
-	}
-
 	//플레이어
 	for (int i = 0; i < MAX_OBJECTSCOUNT; ++i)
 	{
-		if (m_rpObject[i].GetFlag())
+		if (m_rpRedObject[i]->GetFlag()==true)
 		{
-			m_rpObject[i].Draw(m_rRenderer);
+			m_rpRedObject[i]->Draw(m_rRenderer);
+		}
+		if (m_rpBlueObject[i]->GetFlag() == true && m_rpBlueObject[i]->GetColFlag() != true)
+		{
+			m_rpBlueObject[i]->Draw(m_rRenderer);
 		}
 	}
 	//캐슬
-	if (m_cpObject->GetFlag()) 
+	for (int i = 0; i < 3; ++i)
 	{
-		m_cpObject->Draw(m_rRenderer);
-		m_cpObject->DrawImg(m_rRenderer);
+		if (m_cpRedObject[i]->GetFlag()==true)
+		{					
+			m_cpRedObject[i]->Draw(m_rRenderer);
+			m_cpRedObject[i]->DrawImg(m_rRenderer);
+		}
+		if (m_cpBlueObject[i]->GetFlag()==true)
+		{					 
+			m_cpBlueObject[i]->Draw(m_rRenderer);
+			m_cpBlueObject[i]->DrawImg(m_rRenderer);
+		}
 	}
 }
 
 
 void SceneMgr::Timer(float time)
 {
-	m_iReduceRate += (time*0.001);
-	if (m_iReduceRate > 5) {
-		CreateShoot();
-		m_iReduceRate = 0;
+	for (int i = 0; i < 3; ++i)
+	{
+		CreateShoot(i, time);
+		m_cpRedObject[i]->SuperArmer(2, time);
+		m_cpBlueObject[i]->SuperArmer(2, time);
 	}
 
-	//화살생성
+	//화살생성 & obj 슈퍼아머
 	for (int i = 0; i < MAX_OBJECTSCOUNT; ++i)
+	{
 		CreateArrow(i, time);
+		m_rpRedObject[i]->SuperArmer(2, time);
+		m_rpBlueObject[i]->SuperArmer(2, time);
+	}
 
+	//적 플레이어 생성
+	m_dBlueCreateTime += time * 0.001f;
+	if (BCoolTime(COOLCHAR, m_dBlueCreateTime))
+	{
+		BlueCreate();
+		m_dBlueCreateTime = 0;
+	}
+
+	//마우스 
+	m_dCreateTime += time*0.001f;
+	if(BCoolTime(COOLMYCHAR, m_dCreateTime))
+	{
+		m_bCreate = true;
+		m_dCreateTime = 0;
+	}
 }
 
 
 
 bool SceneMgr::Collide(Rect * temp, Rect * col)
 {
-	if (temp->GetPosition().x - temp->GetWidth() < col->GetPosition().x
-		&& col->GetPosition().x < temp->GetPosition().x + temp->GetWidth())
+	if (temp->CollideObject(col))
 	{
-		if (temp->GetPosition().y - temp->GetHeight() < col->GetPosition().y
-			&& col->GetPosition().y < temp->GetPosition().y + temp->GetHeight())
-		{
-			return true;
-		}
-		return false;
+		temp->SetColFlagTrue();
+		col->SetColFlagTrue();
+		return true;
 	}
-
 	return false;
 }
 
-void SceneMgr::CollideArrow(int i)
+bool SceneMgr::CollideShotObj(Rect * temp, Rect * col)
 {
-	for (int j = 0; j < MAX_OBJECTSCOUNT; ++j)
-	{
-		if (i != j && m_rpObject[i].GetFlag() && m_rpObject[j].GetFlag())
+	int type_num;
+	if (col->GetState() == OBJ_CHARACTER)		type_num = MAX_ARROW;
+	else if (col->GetState() == OBJ_BUILDING)	type_num = MAX_BULLETCOUNT;
+	
+	for (int i = 0; i < type_num; ++i) {
+		if (col->GetShotFlag(i) && temp->CollideShotObject(&col->GetShotPosition(i)))
 		{
-			for (int a = 0; a < MAX_ARROW; ++a)
-			{
-				if (m_rpObject[j].GetPosition().x - m_rpObject[j].GetWidth() <= m_rpObject[i].GetArrow(a)->pt.x
-					&& m_rpObject[i].GetArrow(a)->pt.x <= m_rpObject[j].GetPosition().x + m_rpObject[j].GetWidth()
-					&& m_rpObject[j].GetPosition().y - m_rpObject[j].GetHeight() <= m_rpObject[i].GetArrow(a)->pt.y
-					&& m_rpObject[i].GetArrow(a)->pt.y <= m_rpObject[j].GetPosition().y + m_rpObject[j].GetHeight())
-				{
-					m_rpObject[j].ReduceLife(10);
-					m_rpObject[i].DeleteArrow(a);
-				}
-			}
+			temp->SetColFlagTrue();
+			col->DeleteShotObj(i);
+			return true;
 		}
 	}
+	return false;
 }
-
 
 
 void SceneMgr::Release()
 {
-	delete[]m_rpObject;
-	delete[]m_bpObject;
-	delete m_cpObject;
+	delete[]m_rpRedObject;
+	delete[] m_cpRedObject;
+	delete[] m_cpBlueObject;
 	delete m_rRenderer;
 }
