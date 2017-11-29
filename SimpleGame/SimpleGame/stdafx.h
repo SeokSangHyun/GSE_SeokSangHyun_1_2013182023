@@ -15,17 +15,27 @@
 #define BULLETSIZE 10
 
 
-#define MAX_OBJECTSCOUNT 10
-#define MAX_BULLETCOUNT 100
-#define	MAX_ARROW		10
+#define MAX_OBJECTCNT 100
+#define MAX_SHOTOBJECTCNT	500
 
 #define OBJ_SPEED 200
-#define OBJ_LIFE 20
+#define OBJ_LIFE 50
+#define OBJ_BULLET_LIFE 5
+#define OBJ_BUILD_LIFE 200
+
+#define LEV_BUILDING 0.1
+#define LEV_CHAR 0.2
+#define LEV_BULLET 0.3
+#define LEV_ARROW 0.3
 
 #define COOLBULLET 5
-#define COOLCHAR 5
-#define COOLMYCHAR 7
+#define COOLCHAR 4
+#define COOLMYCHAR 2
 #define COOLARROW 4
+#define COOLSPARMER 20
+
+
+#define GaugeHeight 5
 
 	enum {OBJ_BUILDING = 10,
 	OBJ_CHARACTER,

@@ -41,7 +41,6 @@ void RenderScene(void)
 /////////////////////////////////////
 void Update(float time)
 {
-
 	g_manager->Update(time);
 	g_manager->Timer(time);
 }
