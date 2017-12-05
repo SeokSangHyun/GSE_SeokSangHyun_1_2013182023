@@ -11,14 +11,15 @@
 #define WIN_WIDTH 500
 #define WIN_HEIGHT 800
 
-#define RECTSIZE 20
+#define RECTSIZE 40
 #define BULLETSIZE 10
 
 
 #define MAX_OBJECTCNT 100
 #define MAX_SHOTOBJECTCNT	500
 
-#define OBJ_SPEED 200
+#define OBJ_SPEED 500
+#define BULLET_SPEED 1000
 #define OBJ_LIFE 50
 #define OBJ_BULLET_LIFE 5
 #define OBJ_BUILD_LIFE 200
@@ -32,10 +33,12 @@
 #define COOLCHAR 4
 #define COOLMYCHAR 2
 #define COOLARROW 4
-#define COOLSPARMER 20
+#define COOLSPARMER 1
 
 
 #define GaugeHeight 5
+
+enum { DOWN = 0, LEFT = 1, RIGHT = 2, UP = 3};
 
 	enum {OBJ_BUILDING = 10,
 	OBJ_CHARACTER,

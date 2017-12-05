@@ -26,6 +26,7 @@ SceneMgr::SceneMgr()
 			0, 0, 0, 0,
 			1.0, 0.0, 0.0, 1, OBJ_BUILD_LIFE, OBJ_BUILDING, RedTeam, 0.1);
 		m_rpCharObj[i]->SetTextImage(m_rRenderer, "./Img/building1.png");
+		m_rpCharObj[i]->SetCollideTextImgage(m_rRenderer, "./Img/collide.png");
 	}
 	for (int i = 0; i < 3; ++i)
 	{
@@ -33,7 +34,13 @@ SceneMgr::SceneMgr()
 			0, 0, 0, 0,
 			0.0, 0.0, 1.0, 1, OBJ_BUILD_LIFE, OBJ_BUILDING, BlueTeam, 0.1);
 		m_rpCharObj[i+3]->SetTextImage(m_rRenderer, "./Img/building.png");
+		m_rpCharObj[i+3]->SetCollideTextImgage(m_rRenderer, "./Img/collide.png");
 	}
+
+	m_pBackground = new Rect;
+	m_pBackground->SetRect(80,0, WIN_WIDTH*1.5, WIN_HEIGHT*20,
+		0, 0, 0, 0, 1, 1, 1, 1, 0, non, 0, 0.5);
+	m_pBackground->SetTextImage(m_rRenderer, "./Img/background.png");
 }
 
 SceneMgr::~SceneMgr()
@@ -49,9 +56,11 @@ void SceneMgr::RedCreate(float x, float y, float width, float height, int team)
 			if (m_rpCharObj[i]->GetFlag() == false)
 			{
 				m_rpCharObj[i]->SetRect(x, y, width, height,
-					rand() % OBJ_SPEED - OBJ_SPEED*0.5, rand() % OBJ_SPEED - OBJ_SPEED*0.5,
-					(rand() % 2 - 2), (rand() % 2 - 2), 1, 0, 0, 1, OBJ_LIFE, OBJ_CHARACTER, RedTeam, 0.2);
+					rand() % OBJ_SPEED-(OBJ_SPEED/2), rand() % OBJ_SPEED+1 - (OBJ_SPEED / 2),
+					(rand() % 100+1) * 0.01, (rand() % 100 + 1) * 0.01, 1, 0, 0, 1, OBJ_LIFE, OBJ_CHARACTER, RedTeam, 0.2);
+				m_rpCharObj[i]->SetTextImage(m_rRenderer, "./Img/char1.png");
 				m_bCreate = false;
+				m_rpCharObj[i]->SetAniCntDir(rand() % 4);
 				return;
 			}
 		}
@@ -65,7 +74,9 @@ void SceneMgr::BlueCreate()
 		{
 			m_rpCharObj[i]->SetRect(rand() % WIN_WIDTH - WIN_WIDTH*0.5, rand() % (int)(WIN_HEIGHT*0.5), RECTSIZE, RECTSIZE,
 				rand() % OBJ_SPEED - OBJ_SPEED*0.5, rand() % OBJ_SPEED - OBJ_SPEED*0.5,
-				(rand() % 3 - 2.5), (rand() % 3 - 2.5), 0, 0, 1, 1, OBJ_LIFE, OBJ_CHARACTER, BlueTeam, 0.2);
+				(rand() % 100 * 0.01 - 0.55), (rand() % 100 * 0.01 - 0.55), 0, 0, 1, 1, OBJ_LIFE, OBJ_CHARACTER, BlueTeam, 0.2);
+			m_rpCharObj[i]->SetTextImage(m_rRenderer, "./Img/char2.png");
+			m_rpCharObj[i]->SetAniCntDir(rand() % 4);
 			return;
 		}
 }
@@ -81,6 +92,7 @@ void SceneMgr::CreateShoot(int i, float time)
 				int temp = m_rpCharObj[i]->GetState();
 				float color[3];
 				int state;
+				char tex[30];
 
 				switch (temp)
 				{
@@ -99,10 +111,12 @@ void SceneMgr::CreateShoot(int i, float time)
 				m_spShotObj[j]->SetRect(
 					m_rpCharObj[i]->GetPosition().x, m_rpCharObj[i]->GetPosition().y,
 					BULLETSIZE, BULLETSIZE,
-					rand() % OBJ_SPEED - OBJ_SPEED*0.5, rand() % OBJ_SPEED - OBJ_SPEED*0.5,
-					rand() % 3 - 2, rand() % 3 - 2,
+					rand() % BULLET_SPEED - BULLET_SPEED*0.5, rand() % BULLET_SPEED - BULLET_SPEED*0.5,
+					(rand() % 100 * 0.01 - 0.55), (rand() % 100 * 0.01 - 0.55),
 					color[0], color[1], color[2], 1,
 					OBJ_BULLET_LIFE, state, m_rpCharObj[i]->GetTeam(), 0.3 );
+				if (m_spShotObj[j]->GetTeam() == RedTeam)	m_spShotObj[j]->SetTextImage(m_rRenderer, "./Img/Particle.png");
+				else m_spShotObj[j]->SetTextImage(m_rRenderer, "./Img/Particle1.png");
 				return;
 			}
 		}
@@ -153,8 +167,10 @@ void SceneMgr::Update(float time)
 
 void SceneMgr::Render()
 {
+	m_pBackground->DrawImg(m_rRenderer);
 	for (int i = 0; i < MAX_OBJECTCNT; ++i)
 	{
+		m_rpCharObj[i]->DrawAnimation(m_rRenderer);
 		m_rpCharObj[i]->Draw(m_rRenderer);
 		m_rpCharObj[i]->DrawImg(m_rRenderer);
 	}

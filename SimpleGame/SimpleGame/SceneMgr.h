@@ -8,6 +8,7 @@ class SceneMgr
 
 	Rect		*m_rpCharObj[MAX_OBJECTCNT];
 	Rect		*m_spShotObj[MAX_SHOTOBJECTCNT];
+	Rect		*m_pBackground;
 
 	double		m_dBlueCreateTime;
 	double		m_dCreateTime;

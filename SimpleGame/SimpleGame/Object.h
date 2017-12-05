@@ -1,4 +1,5 @@
 #pragma once
+#include "Renderer.h"
 #include <ctime>
 #include <iostream>
 
@@ -26,9 +27,16 @@ class Rect
 	float		actTime;	//생성시간
 	float		m_coolTime; //슈퍼아머 쿨타임
 
+	float		m_AniTime;
+	int			m_AniCnt[2];
+	int			m_colAni;
+
+	float		sumTime;
+
 	//텍스처
 	float		m_color[4];
 	GLuint		m_texImg;
+	GLuint		m_colTextImg;
 	float		m_level;
 
 public:
@@ -39,7 +47,8 @@ public:
 	void SetRect(float x, float y, float width, float height, float spdX, float spdY,
 		float dirX, float dirY, float r, float g, float b, float a, int life, int state, int team, float level);
 	void SetTextImage(Renderer *renderer, char *name);
-
+	void SetCollideTextImgage(Renderer *renderer, char *name);
+	void SetAniCntDir(int aniDir);
 
 	//쿨타임
 	void SetColFlagTrue()			{ m_colFlag = true; };
@@ -60,6 +69,7 @@ public:
 
 	void Draw(Renderer *renderer);
 	void DrawImg(Renderer *renderer);
+	void DrawAnimation(Renderer *renderer);
 
 	bool CollideObject(Rect *col);
 	bool Shot(float cooltime, float time);
