@@ -1,3 +1,4 @@
+
 #include "stdafx.h"
 #include "SceneMgr.h"
 
@@ -8,9 +9,23 @@ SceneMgr::SceneMgr()
 	if (!m_rRenderer->IsInitialized())
 		std::cout << "Renderer could not be initialized.. \n";
 
+	m_sound = new Sound();
+	m_iSoundNum = m_sound->CreateSound("./Dependencies/SoundSamples/Hotel California.mp3");
+	m_sound->PlaySoundW(m_iSoundNum, true, 1.0f);
+
+	for (int i = -2; i <= 2; ++i)
+	{
+		m_fTestcol[i + 2][0] = 1;
+		m_fTestcol[i + 2][1] = 1;
+		m_fTestcol[i + 2][2] = 1;
+		m_fTextpos[i + 2] = WIN_WIDTH / 2;
+	}
+
+
 	m_bCreate = false;
 	m_dBlueCreateTime = 0;
 	m_dCreateTime = 0;
+
 
 	//////
 	for (int i = 0; i < MAX_OBJECTCNT; ++i)
@@ -25,22 +40,22 @@ SceneMgr::SceneMgr()
 		m_rpCharObj[i]->SetRect(WIN_WIDTH*0.25f*(i + 1) - WIN_WIDTH*0.5, -WIN_HEIGHT*0.5 + 100, 100, 100,
 			0, 0, 0, 0,
 			1.0, 0.0, 0.0, 1, OBJ_BUILD_LIFE, OBJ_BUILDING, RedTeam, 0.1);
-		m_rpCharObj[i]->SetTextImage(m_rRenderer, "./Img/building1.png");
-		m_rpCharObj[i]->SetCollideTextImgage(m_rRenderer, "./Img/collide.png");
+		m_rpCharObj[i]->SetTextImage(m_rRenderer, "./Resource/building1.png");
+		m_rpCharObj[i]->SetCollideTextImgage(m_rRenderer, "./Resource/collide.png");
 	}
 	for (int i = 0; i < 3; ++i)
 	{
 		m_rpCharObj[i+3]->SetRect(WIN_WIDTH*0.25f*(i + 1) - WIN_WIDTH*0.5, WIN_HEIGHT*0.5 - 100, 100, 100,
 			0, 0, 0, 0,
 			0.0, 0.0, 1.0, 1, OBJ_BUILD_LIFE, OBJ_BUILDING, BlueTeam, 0.1);
-		m_rpCharObj[i+3]->SetTextImage(m_rRenderer, "./Img/building.png");
-		m_rpCharObj[i+3]->SetCollideTextImgage(m_rRenderer, "./Img/collide.png");
+		m_rpCharObj[i+3]->SetTextImage(m_rRenderer, "./Resource/building.png");
+		m_rpCharObj[i+3]->SetCollideTextImgage(m_rRenderer, "./Resource/collide.png");
 	}
 
 	m_pBackground = new Rect;
 	m_pBackground->SetRect(80,0, WIN_WIDTH*1.5, WIN_HEIGHT*20,
 		0, 0, 0, 0, 1, 1, 1, 1, 0, non, 0, 0.5);
-	m_pBackground->SetTextImage(m_rRenderer, "./Img/background.png");
+	m_pBackground->SetTextImage(m_rRenderer, "./Resource/background.png");
 }
 
 SceneMgr::~SceneMgr()
@@ -58,7 +73,7 @@ void SceneMgr::RedCreate(float x, float y, float width, float height, int team)
 				m_rpCharObj[i]->SetRect(x, y, width, height,
 					rand() % OBJ_SPEED-(OBJ_SPEED/2), rand() % OBJ_SPEED+1 - (OBJ_SPEED / 2),
 					(rand() % 100+1) * 0.01, (rand() % 100 + 1) * 0.01, 1, 0, 0, 1, OBJ_LIFE, OBJ_CHARACTER, RedTeam, 0.2);
-				m_rpCharObj[i]->SetTextImage(m_rRenderer, "./Img/char1.png");
+				m_rpCharObj[i]->SetTextImage(m_rRenderer, "./Resource/char1.png");
 				m_bCreate = false;
 				m_rpCharObj[i]->SetAniCntDir(rand() % 4);
 				return;
@@ -75,7 +90,7 @@ void SceneMgr::BlueCreate()
 			m_rpCharObj[i]->SetRect(rand() % WIN_WIDTH - WIN_WIDTH*0.5, rand() % (int)(WIN_HEIGHT*0.5), RECTSIZE, RECTSIZE,
 				rand() % OBJ_SPEED - OBJ_SPEED*0.5, rand() % OBJ_SPEED - OBJ_SPEED*0.5,
 				(rand() % 100 * 0.01 - 0.55), (rand() % 100 * 0.01 - 0.55), 0, 0, 1, 1, OBJ_LIFE, OBJ_CHARACTER, BlueTeam, 0.2);
-			m_rpCharObj[i]->SetTextImage(m_rRenderer, "./Img/char2.png");
+			m_rpCharObj[i]->SetTextImage(m_rRenderer, "./Resource/char2.png");
 			m_rpCharObj[i]->SetAniCntDir(rand() % 4);
 			return;
 		}
@@ -115,8 +130,8 @@ void SceneMgr::CreateShoot(int i, float time)
 					(rand() % 100 * 0.01 - 0.55), (rand() % 100 * 0.01 - 0.55),
 					color[0], color[1], color[2], 1,
 					OBJ_BULLET_LIFE, state, m_rpCharObj[i]->GetTeam(), 0.3 );
-				if (m_spShotObj[j]->GetTeam() == RedTeam)	m_spShotObj[j]->SetTextImage(m_rRenderer, "./Img/Particle.png");
-				else m_spShotObj[j]->SetTextImage(m_rRenderer, "./Img/Particle1.png");
+				if (m_spShotObj[j]->GetTeam() == RedTeam)	m_spShotObj[j]->SetTextImage(m_rRenderer, "./Resource/Particle.png");
+				else m_spShotObj[j]->SetTextImage(m_rRenderer, "./Resource/Particle1.png");
 				return;
 			}
 		}
@@ -162,6 +177,16 @@ void SceneMgr::Update(float time)
 	}
 	//체력 0 미만시 삭제
 	DelCheck();
+
+
+	//
+	for (int i = -2; i <= 2; ++i)
+	{
+		m_fTestcol[i + 2][0] = rand()%100*0.01f;
+		m_fTestcol[i + 2][1] = rand()%100*0.01f;
+		m_fTestcol[i + 2][2] = rand()%100*0.01f;
+		m_fTextpos[i + 2] = rand()%20;
+	}
 }
 
 
@@ -170,15 +195,19 @@ void SceneMgr::Render()
 	m_pBackground->DrawImg(m_rRenderer);
 	for (int i = 0; i < MAX_OBJECTCNT; ++i)
 	{
-		m_rpCharObj[i]->DrawAnimation(m_rRenderer);
 		m_rpCharObj[i]->Draw(m_rRenderer);
 		m_rpCharObj[i]->DrawImg(m_rRenderer);
+		m_rpCharObj[i]->DrawAnimation(m_rRenderer);
 	}
 	//
 	for (int i = 0; i < MAX_SHOTOBJECTCNT; ++i)
 	{
 		m_spShotObj[i]->Draw(m_rRenderer);
 	}
+
+	for(int i = 0 ; i < 4 ; ++i)
+		m_rRenderer->DrawText(WIN_WIDTH / 2 - (i-2)*20 - WIN_WIDTH/2, m_fTextpos[i],
+			GLUT_BITMAP_TIMES_ROMAN_24, m_fTestcol[i][0], m_fTestcol[i][1], m_fTestcol[i][2], "AoA");
 }
 
 

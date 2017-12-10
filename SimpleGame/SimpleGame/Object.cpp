@@ -92,7 +92,7 @@ void Rect::Draw(Renderer * renderer)
 
 void Rect::DrawImg(Renderer * renderer)
 {
-	if (m_flag == true)
+	if (m_flag && m_state != OBJ_CHARACTER)
 	{
 		renderer->DrawTexturedRect(m_pos.x, m_pos.y, 0, m_width,
 			m_color[0], m_color[1], m_color[2], m_color[3],

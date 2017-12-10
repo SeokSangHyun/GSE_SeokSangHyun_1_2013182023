@@ -1,10 +1,18 @@
 #pragma once
 #include "stdafx.h"
+#include "Sound.h"
 #include "Object.h"
 
 class SceneMgr
 {
-	Renderer *m_rRenderer;
+	Renderer	*m_rRenderer;
+
+	Sound		*m_sound;
+	int			m_iSoundNum;
+	float		m_fsound;
+
+	float		m_fTextpos[5];
+	float		m_fTestcol[5][3];
 
 	Rect		*m_rpCharObj[MAX_OBJECTCNT];
 	Rect		*m_spShotObj[MAX_SHOTOBJECTCNT];
