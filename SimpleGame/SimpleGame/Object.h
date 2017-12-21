@@ -11,6 +11,11 @@ struct Point
 
 class Rect
 {
+	int			m_aiNum;//객체의 인공지능을 어떤 것으로 할 것인다.
+	Point		spin_pos;//상태가 spin일때 
+	float		radian;
+	Point		back_pos, back_excel;//충돌하면 뒤로 밀림
+
 	Point		m_pos;
 	Point		m_dir;
 	Point		m_speed;
@@ -61,11 +66,12 @@ public:
 	float GetHeight()				{ return m_height; }
 	float* GetColor()				{ return m_color; }
 	int GetLife()					{ return m_iLifeTime; }
+	Point GetDir()					{ return m_dir; };
 	bool GetFlag()					{ return m_flag; }
 	bool GetColFlag()				{ return m_colFlag; }
 	int	GetState()					{ return m_state; }
 	int GetTeam()					{ return m_team; };
-
+	float GetLevel()				{ return m_level; };
 
 	void Draw(Renderer *renderer);
 	void DrawImg(Renderer *renderer);
@@ -75,11 +81,12 @@ public:
 	bool Shot(float cooltime, float time);
 
 	void AddPosition(float tnow);
-	void SuperArmer(float cooltime, float time);
+;	void SuperArmer(float cooltime, float time);
 	void ReduceLife(int damage)		{ m_iLifeTime -= damage; }
 	double CalGauge();
 
-	void Delete();
+	void Delete(void);
 	void Update(float stime);
+	void Release(void);
 };
 

@@ -24,14 +24,14 @@ DWORD st = 0, ed;
 
 float temp_time = 0;
 bool mouse_click = false;
-
+POINT move_pt = { 0,0 };
 
 
 void RenderScene(void)
 {
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glClearColor(0.0f, 0.3f, 0.3f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 
 	g_manager->Render();
@@ -78,6 +78,13 @@ void MouseInput(int button, int state, int x, int y)
 	}
 	RenderScene();
 }
+void MouseMove(int x, int y)
+{
+	g_manager->mou_pt.x = x - (WIN_WIDTH*0.5);
+	g_manager->mou_pt.y = (WIN_HEIGHT*0.5) - y;
+}
+
+
 
 void KeyInput(unsigned char key, int x, int y)
 {
@@ -118,6 +125,7 @@ int main(int argc, char **argv)
 	glutIdleFunc(Idle);
 	glutKeyboardFunc(KeyInput);
 	glutMouseFunc(MouseInput);
+	glutPassiveMotionFunc(MouseMove);
 	glutSpecialFunc(SpecialKeyInput);
 
 	glutTimerFunc(500, TimerFunc, 1);

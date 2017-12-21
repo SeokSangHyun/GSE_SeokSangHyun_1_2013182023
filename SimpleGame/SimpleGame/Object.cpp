@@ -5,6 +5,9 @@
 
 Rect::Rect()
 {
+	spin_pos = {WIN_WIDTH, WIN_HEIGHT};
+	radian = 0.0f;
+
 	sumTime = 0;
 	m_flag = false;
 	m_state = non;
@@ -46,6 +49,12 @@ void Rect::SetRect(float x, float y, float width, float height,
 	m_colFlag = false;
 	m_flag = true;
 	m_level = level;
+
+	if (m_state == OBJ_ARROW)
+	{
+		spin_pos = {0,0};
+		m_aiNum = rand() % 2;
+	}
 }
 
 
@@ -60,8 +69,6 @@ void Rect::SetCollideTextImgage(Renderer * renderer, char * name)
 }
 
 
-
-
 void Rect::SetAniCntDir(int aniDir)
 {
 	m_AniCnt[1] = aniDir;
@@ -72,10 +79,15 @@ void Rect::Draw(Renderer * renderer)
 {
 	//
 	if (m_flag == true) {
-		if (m_state != OBJ_BUILDING)
-			renderer->DrawSolidRect(m_pos.x, m_pos.y, 0, m_width,
-				m_color[0], m_color[1], m_color[2], m_color[3], m_level);
-
+		if (m_state == OBJ_ARROW)
+		{
+			if(m_aiNum == Ai::normal)
+				renderer->DrawSolidRect(m_pos.x, m_pos.y, 0, m_width,
+					m_color[0], m_color[1], m_color[2], m_color[3], m_level);
+			else if (m_aiNum == Ai::spin)
+				renderer->DrawSolidRect(m_pos.x +spin_pos.x, m_pos.y+ spin_pos.y, 0, m_width,
+					m_color[0], m_color[1], m_color[2], m_color[3], m_level);
+		}
 		if (m_state == OBJ_BUILDING || m_state == OBJ_CHARACTER) {
 			double num = CalGauge();
 			renderer->DrawSolidRectGauge(m_pos.x, m_pos.y + m_height*0.8, 0, m_width, GaugeHeight,
@@ -84,7 +96,7 @@ void Rect::Draw(Renderer * renderer)
 		if (m_state == OBJ_BULLET) {
 
 			renderer->DrawParticle(m_pos.x, m_pos.y, 0, m_width, 1,1,1,1,
-				m_dir.x*-10, m_dir.y*-10, m_texImg, sumTime);
+				-m_dir.x, -m_dir.y, m_texImg, sumTime, m_level);
 		}
 	}
 	//
@@ -94,7 +106,7 @@ void Rect::DrawImg(Renderer * renderer)
 {
 	if (m_flag && m_state != OBJ_CHARACTER)
 	{
-		renderer->DrawTexturedRect(m_pos.x, m_pos.y, 0, m_width,
+		renderer->DrawTexturedRectXY(m_pos.x, m_pos.y, 0, m_width, m_height,
 			m_color[0], m_color[1], m_color[2], m_color[3],
 			m_texImg, m_level);
 
@@ -119,6 +131,11 @@ bool Rect::CollideObject(Rect * col)
 		if ((m_pos.x - (m_width*0.5) <= col->GetPosition().x && col->GetPosition().x <= m_pos.x + (m_width*0.5)) &&
 			(m_pos.y - (m_height*0.5) <= col->GetPosition().y && col->GetPosition().y <= m_pos.y + (m_height*0.5)))
 		{
+			if (m_state == OBJ_CHARACTER && col->GetState() == OBJ_BULLET)
+			{
+				back_excel = {col->GetDir().x, col->GetDir().y};
+				back_pos = { rand() % 10 + 15.f, rand() % 10 + 15.f };
+			}
 			SetColFlagTrue();
 			col->SetColFlagTrue();
 			return true;
@@ -177,8 +194,24 @@ void Rect::AddPosition(float tnow)
 		else if (m_pos.y >= WIN_HEIGHT*0.5 || m_pos.y <= -WIN_HEIGHT*0.5)
 			Delete();
 	}
-	m_pos.x += (m_dir.x*m_speed.x*(tnow*0.001));
-	m_pos.y += (m_dir.y*m_speed.y*(tnow*0.001));
+
+	if (m_state == OBJ_ARROW && m_aiNum == Ai::spin)
+	{
+		radian += 0.5f;
+		spin_pos.x = cos(radian)*m_width;
+		spin_pos.y = sin(radian)*m_height;
+	}
+
+	if (m_colFlag == false)
+	{
+		m_pos.x += (m_dir.x*m_speed.x*(tnow*0.001));
+		m_pos.y += (m_dir.y*m_speed.y*(tnow*0.001));
+	}
+	else if (m_colFlag == true && m_state == OBJ_CHARACTER)
+	{
+			m_pos.x += back_excel.x*back_pos.x*(tnow*0.001);
+			m_pos.y += back_excel.y*back_pos.y*(tnow*0.001);
+	}
 }
 
 
@@ -233,4 +266,15 @@ void Rect::Update(float time)
 			m_colAni = (m_colAni + 1) % 9;
 
 	}
+}
+
+
+void Rect::Release(void)
+{
+	sumTime = 0;
+	m_flag = false;
+	m_state = non;
+	m_AniCnt[0] = 0;
+	m_AniTime = 0.0f;
+	m_colAni = 0;
 }

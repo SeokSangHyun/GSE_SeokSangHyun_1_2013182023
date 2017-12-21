@@ -15,14 +15,15 @@
 #define BULLETSIZE 10
 
 
-#define MAX_OBJECTCNT 100
-#define MAX_SHOTOBJECTCNT	500
+#define MAX_OBJECTCNT 60
+#define MAX_SHOTOBJECTCNT	300
 
 #define OBJ_SPEED 500
-#define BULLET_SPEED 1000
-#define OBJ_LIFE 50
-#define OBJ_BULLET_LIFE 5
-#define OBJ_BUILD_LIFE 200
+#define BULLET_SPEED 500
+#define ARROW_SPEED 400
+#define OBJ_LIFE 60
+#define OBJ_BULLET_LIFE 4
+#define OBJ_BUILD_LIFE 800
 
 #define LEV_BUILDING 0.1
 #define LEV_CHAR 0.2
@@ -38,7 +39,12 @@
 
 #define GaugeHeight 5
 
-enum { DOWN = 0, LEFT = 1, RIGHT = 2, UP = 3};
+
+enum gamestate { logIn = 1000, inGame };
+enum Ai { normal = 0, spin };
+
+
+	enum { DOWN = 0, LEFT = 1, RIGHT = 2, UP = 3};
 
 	enum {OBJ_BUILDING = 10,
 	OBJ_CHARACTER,

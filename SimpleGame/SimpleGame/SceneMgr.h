@@ -6,6 +6,7 @@
 class SceneMgr
 {
 	Renderer	*m_rRenderer;
+	GLuint		tex_mouse;
 
 	Sound		*m_sound;
 	int			m_iSoundNum;
@@ -22,10 +23,24 @@ class SceneMgr
 	double		m_dCreateTime;
 	bool		m_bCreate;
 
+	GLuint		whetherText;
+	GLuint		cloud;
+	float		m_sumTime;
+
+	//씬 넘길 때
+	bool		stageNext;
+	int			g_iGameState;
+	int			m_num;//logIn 때 제목
+	float		g_sceCnt;
+	GLuint		tex_logIn;
+	GLuint		tex_Name;
+	
 public:
+	POINT	mou_pt;
 	SceneMgr();
 	~SceneMgr();
 
+public:
 	void RedCreate(float x, float y, float width, float height, int team);
 	void BlueCreate();
 	void CreateShoot(int i, float time);
@@ -35,7 +50,6 @@ public:
 	/*
 	*/
 	void Timer(float time);
-	bool Collide(int n);
 	bool ShotCollide(int n);
 	void DelCheck();
 	void Release();
