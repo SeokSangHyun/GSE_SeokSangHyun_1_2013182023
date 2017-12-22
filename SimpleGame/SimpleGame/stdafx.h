@@ -23,7 +23,7 @@
 #define ARROW_SPEED 400
 #define OBJ_LIFE 60
 #define OBJ_BULLET_LIFE 4
-#define OBJ_BUILD_LIFE 800
+#define OBJ_BUILD_LIFE 300
 
 #define LEV_BUILDING 0.1
 #define LEV_CHAR 0.2

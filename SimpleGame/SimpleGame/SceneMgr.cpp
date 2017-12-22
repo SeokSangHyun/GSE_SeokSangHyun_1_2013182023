@@ -5,6 +5,7 @@
 
 SceneMgr::SceneMgr()
 {
+	count = 0;
 	g_iGameState = gamestate::logIn;
 	m_num = 50;
 	stageNext = false;
@@ -15,8 +16,15 @@ SceneMgr::SceneMgr()
 	tex_mouse = m_rRenderer->CreatePngTexture("./Resource/mouse.png");
 
 	m_sound = new Sound();
-	m_iSoundNum = m_sound->CreateSound("./Dependencies/SoundSamples/Hotel California.mp3");
-	m_sound->PlaySoundW(m_iSoundNum, true, 1.0f);
+	m_iBreak = new Sound();
+	m_iCreate = new Sound();
+	if(rand()%2 == 0)
+		m_iSoundNum = m_sound->CreateSound("./Dependencies/SoundSamples/DINOSAUR.mp3");
+	else
+		m_iSoundNum = m_sound->CreateSound("./Dependencies/SoundSamples/BABE.mp3");
+	m_sound->PlaySound(m_iSoundNum, true, 1.0f);
+	m_iBreakNum = m_sound->CreateSound("./Dependencies/SoundSamples/explosion.mp3");
+	m_iCreateNum = m_iCreate->CreateSound("./Dependencies/SoundSamples/click.wav");
 
 	for (int i = -2; i <= 2; ++i)
 	{
@@ -99,6 +107,8 @@ void SceneMgr::RedCreate(float x, float y, float width, float height, int team)
 						m_rpCharObj[i]->SetTextImage(m_rRenderer, "./Resource/char1.png");
 						m_bCreate = false;
 						m_rpCharObj[i]->SetAniCntDir(rand() % 4);
+						m_iCreate->PlaySound(m_iCreateNum, false, 1.0f);
+						count++;
 						return;
 					}
 				}
@@ -118,6 +128,8 @@ void SceneMgr::BlueCreate()
 				(rand() % 100 * 0.01 - 0.55), (rand() % 100 * 0.01 - 0.55), 0, 0, 1, 1, OBJ_LIFE, OBJ_CHARACTER, BlueTeam, 0.2);
 			m_rpCharObj[i]->SetTextImage(m_rRenderer, "./Resource/char2.png");
 			m_rpCharObj[i]->SetAniCntDir(rand() % 4);
+			m_iCreate->PlaySound(m_iCreateNum, false, 1.0f);
+			count++;
 			return;
 		}
 }
@@ -186,45 +198,42 @@ void SceneMgr::Update(float time)
 	{
 	case gamestate::logIn:
 		{}
-	break;
+		break;
 	case gamestate::inGame:
 		{
-			int count = 0;
-	
-			for (int i = 0; i < MAX_OBJECTCNT; ++i)
-		{
-			if (m_rpCharObj[i]->GetFlag())
-			{
 
-				for (int j = 0; j < MAX_OBJECTCNT; ++j)
+			for (int i = 0; i < MAX_OBJECTCNT; ++i)
+			{
+				if (m_rpCharObj[i]->GetFlag())
 				{
-					if (i != j && m_rpCharObj[j]->GetFlag()
-						&& m_rpCharObj[i]->GetState() == OBJ_BUILDING
-						&& m_rpCharObj[j]->GetState() == OBJ_CHARACTER)
+
+					for (int j = 0; j < MAX_OBJECTCNT; ++j)
 					{
-						if (m_rpCharObj[i]->CollideObject(m_rpCharObj[j]))
+						if (i != j && m_rpCharObj[j]->GetFlag()
+							&& m_rpCharObj[i]->GetState() == OBJ_BUILDING
+							&& m_rpCharObj[j]->GetState() == OBJ_CHARACTER)
 						{
-							if (m_rpCharObj[i]->GetColFlag()) {
-								m_rpCharObj[i]->ReduceLife(m_rpCharObj[j]->GetLife());
-								m_rpCharObj[j]->Delete();
-								break;
+							if (m_rpCharObj[i]->CollideObject(m_rpCharObj[j]))
+							{
+								if (m_rpCharObj[i]->GetColFlag()) {
+									m_rpCharObj[i]->ReduceLife(m_rpCharObj[j]->GetLife());
+									m_rpCharObj[j]->Delete();
+									break;
+								}
 							}
 						}
 					}
+					ShotCollide(i);
 				}
-				ShotCollide(i);
+				m_rpCharObj[i]->Update(time);
+				m_rpCharObj[i]->SuperArmer(COOLSPARMER, time);
 			}
-			m_rpCharObj[i]->Update(time);
-			m_rpCharObj[i]->SuperArmer(COOLSPARMER, time);
-		}
 			for (int i = 0; i < MAX_OBJECTCNT; ++i)
 		{
 			m_spShotObj[i]->Update(time);
 		}
 			//체력 0 미만시 삭제
 			DelCheck();
-	
-	
 			//
 			for (int i = -2; i <= 2; ++i)
 			{
@@ -281,6 +290,7 @@ void SceneMgr::Render()
 
 void SceneMgr::Timer(float time)
 {
+	std::cout << count << std::endl;
 	switch (g_iGameState)
 	{
 	case gamestate::logIn:
@@ -294,6 +304,7 @@ void SceneMgr::Timer(float time)
 					stageNext = false;
 					g_sceCnt = 1.0f;
 					g_iGameState = gamestate::inGame;
+
 				}
 			}
 			else
@@ -333,16 +344,13 @@ bool SceneMgr::ShotCollide(int n)
 {
 	for (int j = 0; j < MAX_SHOTOBJECTCNT; ++j)
 	{
-		if (m_spShotObj[j]->GetFlag())
+		if (m_spShotObj[j]->GetFlag()&& m_rpCharObj[n]->GetColFlag()==false)
 		{
 			if (m_rpCharObj[n]->CollideObject(m_spShotObj[j]))
 			{
-				if (m_rpCharObj[n]->GetColFlag())
-				{
-					m_rpCharObj[n]->ReduceLife(OBJ_BULLET_LIFE);
-					m_spShotObj[j]->Delete();
-					return true;
-				}
+				m_rpCharObj[n]->ReduceLife(OBJ_BULLET_LIFE);
+				m_spShotObj[j]->Delete();
+				return true;
 			}
 		}
 	}
@@ -354,8 +362,13 @@ void SceneMgr::DelCheck()
 {
 	for (int i = 0; i < MAX_OBJECTCNT; ++i)
 	{
-		if(m_rpCharObj[i]->GetFlag() && m_rpCharObj[i]->GetLife() < 0)
+		if (m_rpCharObj[i]->GetFlag() && m_rpCharObj[i]->GetLife() < 0)
+		{
+			count--;
+			if(m_rpCharObj[i]->GetState() == OBJ_BUILDING)
+				m_sound->PlaySound(m_iBreakNum, false, 1.0f);
 			m_rpCharObj[i]->Delete();
+		}
 	}
 }
 

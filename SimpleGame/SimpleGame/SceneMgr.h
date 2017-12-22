@@ -7,9 +7,10 @@ class SceneMgr
 {
 	Renderer	*m_rRenderer;
 	GLuint		tex_mouse;
+	int count;
 
-	Sound		*m_sound;
-	int			m_iSoundNum;
+	Sound		*m_sound, *m_iBreak, *m_iCreate;
+	int			m_iSoundNum, m_iBreakNum, m_iCreateNum;
 	float		m_fsound;
 
 	float		m_fTextpos[5];

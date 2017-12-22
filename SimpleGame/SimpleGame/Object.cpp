@@ -14,6 +14,8 @@ Rect::Rect()
 	m_AniCnt[0] = 0;
 	m_AniTime = 0.0f;
 	m_colAni = 0;
+
+	m_texImg = NULL;
 }
 
 
@@ -60,7 +62,8 @@ void Rect::SetRect(float x, float y, float width, float height,
 
 void Rect::SetTextImage(Renderer *renderer, char *name)
 {
-	m_texImg = renderer->CreatePngTexture(name);
+	if(m_texImg == NULL)
+		m_texImg = renderer->CreatePngTexture(name);
 }
 
 void Rect::SetCollideTextImgage(Renderer * renderer, char * name)
@@ -247,11 +250,14 @@ Point Rect::GetPosition()
 
 void Rect::Delete()
 {
+	if (m_state == OBJ_CHARACTER)
+		std::cout << m_iLifeTime;
 	m_pos.x = WIN_WIDTH + 500;	m_pos.y = WIN_HEIGHT +500;
 	m_flag = false;
 	m_colFlag = false;
 	m_iLifeTime = 0;
 	actTime = 0;
+	m_texImg = NULL;
 }
 
 
