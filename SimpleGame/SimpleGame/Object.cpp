@@ -252,7 +252,6 @@ void Rect::Delete()
 {
 	if (m_state == OBJ_CHARACTER)
 		std::cout << m_iLifeTime;
-	m_pos.x = WIN_WIDTH + 500;	m_pos.y = WIN_HEIGHT +500;
 	m_flag = false;
 	m_colFlag = false;
 	m_iLifeTime = 0;
