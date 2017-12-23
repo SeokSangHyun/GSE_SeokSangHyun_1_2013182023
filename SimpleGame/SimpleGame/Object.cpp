@@ -68,8 +68,7 @@ void Rect::SetRect(float x, float y, float width, float height,
 
 void Rect::SetTextImage(Renderer *renderer, char *name)
 {
-	if(m_texImg == NULL)
-		m_texImg = renderer->CreatePngTexture(name);
+	m_texImg = renderer->CreatePngTexture(name);
 }
 
 void Rect::SetCollideTextImgage(Renderer * renderer, char * name)
@@ -124,12 +123,15 @@ void Rect::DrawImg(Renderer * renderer)
 
 void Rect::DrawAnimation(Renderer * renderer)
 {
-	if(m_state == OBJ_CHARACTER)
-		renderer->DrawTexturedRectSeq(m_pos.x, m_pos.y, 0, m_width,
-			1,1,1,1, m_texImg, m_AniCnt[0], m_AniCnt[1],3,4, m_level);
-	else if (m_state == OBJ_BUILDING && m_colFlag)
-		renderer->DrawTexturedRectSeq(m_pos.x, m_pos.y, 0, m_width,
-			1, 1, 1, 1, m_colTextImg, m_colAni, 0, 9, 1, m_level);
+	if (m_flag)
+	{
+		if (m_state == OBJ_CHARACTER)
+			renderer->DrawTexturedRectSeq(m_pos.x, m_pos.y, 0, m_width,
+				1, 1, 1, 1, m_texImg, m_AniCnt[0], m_AniCnt[1], 3, 4, m_level);
+		else if (m_state == OBJ_BUILDING && m_colFlag)
+			renderer->DrawTexturedRectSeq(m_pos.x, m_pos.y, 0, m_width,
+				1, 1, 1, 1, m_colTextImg, m_colAni, 0, 9, 1, m_level);
+	}
 }
 
 
@@ -258,7 +260,6 @@ void Rect::Delete()
 	m_colFlag = false;
 	m_iLifeTime = 0;
 	actTime = 0;
-	m_texImg = NULL;
 }
 
 

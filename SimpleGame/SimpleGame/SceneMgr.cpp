@@ -25,7 +25,7 @@ SceneMgr::SceneMgr()
 		m_iSoundNum = m_sound->CreateSound("./Dependencies/SoundSamples/DINOSAUR.mp3");
 	else
 		m_iSoundNum = m_sound->CreateSound("./Dependencies/SoundSamples/BABE.mp3");
-	m_sound->PlaySound(m_iSoundNum, false, 1.0f);
+	m_sound->PlaySoundW(m_iSoundNum, false, 1.0f);
 
 	m_iBreakNum = m_iBreak->CreateSound("./Dependencies/SoundSamples/explosion.mp3");
 	m_iCreateNum = m_iCreate->CreateSound("./Dependencies/SoundSamples/click.wav");
@@ -52,22 +52,6 @@ SceneMgr::SceneMgr()
 		m_spShotObj[i] = new Rect();
 
 	//Ä³½½
-	for (int i = 0; i < 3; ++i)
-	{
-		m_rpCharObj[i]->SetRect(WIN_WIDTH*0.25f*(i + 1) - WIN_WIDTH*0.5, -WIN_HEIGHT*0.5 + 100, 100, 100,
-			0, 0, 0, 0,
-			1.0, 0.0, 0.0, 1, OBJ_BUILD_LIFE, OBJ_BUILDING, RedTeam, 0.1);
-		m_rpCharObj[i]->SetTextImage(m_rRenderer, "./Resource/building1.png");
-		m_rpCharObj[i]->SetCollideTextImgage(m_rRenderer, "./Resource/collide.png");
-	}
-	for (int i = 0; i < 3; ++i)
-	{
-		m_rpCharObj[i + 3]->SetRect(WIN_WIDTH*0.25f*(i + 1) - WIN_WIDTH*0.5, WIN_HEIGHT*0.5 - 100, 100, 100,
-			0, 0, 0, 0,
-			0.0, 0.0, 1.0, 1, OBJ_BUILD_LIFE, OBJ_BUILDING, BlueTeam, 0.1);
-		m_rpCharObj[i + 3]->SetTextImage(m_rRenderer, "./Resource/building.png");
-		m_rpCharObj[i + 3]->SetCollideTextImgage(m_rRenderer, "./Resource/collide.png");
-	}
 
 	m_pBackground = new Rect;
 	m_pBackground->SetRect(0,0, WIN_WIDTH*1.25, WIN_WIDTH*1.55,
@@ -301,7 +285,7 @@ void SceneMgr::Update(float time)
 				}
 			}
 			if (teamCount[0] == 0 || teamCount[1] == 0) {
-				m_soundEnd->PlaySound(m_soundEndNum, true, 1.0f);
+				m_soundEnd->PlaySound(m_soundEndNum, false, 1.0f);
 				m_num = 50.f;
 				g_iGameState = gamestate::end;
 			}
@@ -380,7 +364,22 @@ void SceneMgr::Timer(float time)
 				{
 					stageNext = false;
 					g_alphaCnt = 1.0f;
-
+					for (int i = 0; i < 3; ++i)
+					{
+						m_rpCharObj[i]->SetRect(WIN_WIDTH*0.25f*(i + 1) - WIN_WIDTH*0.5, -WIN_HEIGHT*0.5 + 100, 100, 100,
+							0, 0, 0, 0,
+							1.0, 0.0, 0.0, 1, OBJ_BUILD_LIFE, OBJ_BUILDING, RedTeam, 0.1);
+						m_rpCharObj[i]->SetTextImage(m_rRenderer, "./Resource/building1.png");
+						m_rpCharObj[i]->SetCollideTextImgage(m_rRenderer, "./Resource/collide.png");
+					}
+					for (int i = 0; i < 3; ++i)
+					{
+						m_rpCharObj[i + 3]->SetRect(WIN_WIDTH*0.25f*(i + 1) - WIN_WIDTH*0.5, WIN_HEIGHT*0.5 - 100, 100, 100,
+							0, 0, 0, 0,
+							0.0, 0.0, 1.0, 1, OBJ_BUILD_LIFE, OBJ_BUILDING, BlueTeam, 0.1);
+						m_rpCharObj[i + 3]->SetTextImage(m_rRenderer, "./Resource/building.png");
+						m_rpCharObj[i + 3]->SetCollideTextImgage(m_rRenderer, "./Resource/collide.png");
+					}
 					g_iGameState = gamestate::inGame;
 
 				}
@@ -412,11 +411,14 @@ void SceneMgr::Timer(float time)
 				m_bCreate = true;
 				m_dCreateTime = 0;
 			}
-			m_earthTimer += time*0.001f;
-			if (m_earthquake == true && BCoolTime(4, m_earthTimer))
+			if (m_earthquake == true)
 			{
-				m_earthTimer = 0;
-				m_earthquake = false;
+				m_earthTimer += time*0.001f;
+				if (BCoolTime(4, m_earthTimer))
+				{
+					m_earthTimer = 0;
+					m_earthquake = false;
+				}
 			}
 		}
 		break;
@@ -431,18 +433,6 @@ void SceneMgr::Timer(float time)
 		if (BCoolTime(10, m_SceCnt)) {
 			g_alphaCnt = 1.0f;
 			m_SceCnt = 0.0f;
-			for (int i = 0; i < 3; ++i)
-			{
-				m_rpCharObj[i]->SetRect(WIN_WIDTH*0.25f*(i + 1) - WIN_WIDTH*0.5, -WIN_HEIGHT*0.5 + 100, 100, 100,
-					0, 0, 0, 0,
-					1.0, 0.0, 0.0, 1, OBJ_BUILD_LIFE, OBJ_BUILDING, RedTeam, 0.1);
-			}
-			for (int i = 0; i < 3; ++i)
-			{
-				m_rpCharObj[i + 3]->SetRect(WIN_WIDTH*0.25f*(i + 1) - WIN_WIDTH*0.5, WIN_HEIGHT*0.5 - 100, 100, 100,
-					0, 0, 0, 0,
-					0.0, 0.0, 1.0, 1, OBJ_BUILD_LIFE, OBJ_BUILDING, BlueTeam, 0.1);
-			}
 			g_iGameState = gamestate::logIn;
 		}
 		break;
