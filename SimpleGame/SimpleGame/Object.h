@@ -5,8 +5,8 @@
 
 struct Point
 {
-	double x;
-	double y;
+	float x;
+	float y;
 };
 
 class Rect
@@ -60,7 +60,7 @@ public:
 	void SetColFlagFalse()			{ m_colFlag = false; };
 
 	//º¯¼ö Get / Set
-	Point GetPosition();
+	Point* GetPosition();
 	GLuint GetTexcharacter()		{ return m_texImg; }
 	float GetWidth()				{ return m_width; }
 	float GetHeight()				{ return m_height; }
@@ -86,7 +86,7 @@ public:
 	double CalGauge();
 
 	void Delete(void);
-	void Update(float stime);
+	void Update(float time);
 	void Release(void);
 };
 

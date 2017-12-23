@@ -40,7 +40,7 @@
 #define GaugeHeight 5
 
 
-enum gamestate { logIn = 1000, inGame };
+enum gamestate { logIn = 1000, inGame, end };
 enum Ai { normal = 0, spin };
 
 

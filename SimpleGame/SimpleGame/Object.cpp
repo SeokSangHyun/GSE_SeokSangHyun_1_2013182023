@@ -5,8 +5,14 @@
 
 Rect::Rect()
 {
-	spin_pos = {WIN_WIDTH, WIN_HEIGHT};
+	spin_pos = {0, 0};
 	radian = 0.0f;
+	back_pos = {5.0f, 5.0f};
+	back_excel = {0.2f, 0.2f};
+
+	m_pos =		{0.f,0.f};
+	m_dir =		{0.f,0.f};
+	m_speed =	{0.f,0.f};
 
 	sumTime = 0;
 	m_flag = false;
@@ -51,7 +57,7 @@ void Rect::SetRect(float x, float y, float width, float height,
 	m_colFlag = false;
 	m_flag = true;
 	m_level = level;
-
+	radian = 0.0f;
 	if (m_state == OBJ_ARROW)
 	{
 		spin_pos = {0,0};
@@ -131,8 +137,8 @@ bool Rect::CollideObject(Rect * col)
 {
 	if ((m_colFlag == false) && (m_team != col->GetTeam()))
 	{ 
-		if ((m_pos.x - (m_width*0.5) <= col->GetPosition().x && col->GetPosition().x <= m_pos.x + (m_width*0.5)) &&
-			(m_pos.y - (m_height*0.5) <= col->GetPosition().y && col->GetPosition().y <= m_pos.y + (m_height*0.5)))
+		if ((m_pos.x - (m_width*0.5) <= col->GetPosition()->x && col->GetPosition()->x <= m_pos.x + (m_width*0.5)) &&
+			(m_pos.y - (m_height*0.5) <= col->GetPosition()->y && col->GetPosition()->y <= m_pos.y + (m_height*0.5)))
 		{
 			if (m_state == OBJ_CHARACTER && col->GetState() == OBJ_BULLET)
 			{
@@ -164,16 +170,16 @@ void Rect::AddPosition(float tnow)
 
 	if (m_state == OBJ_CHARACTER)
 	{
-		if (m_pos.x >= WIN_WIDTH*0.5)
+		if (m_pos.x >= WIN_WIDTH*0.5f)
 		{
 			m_AniCnt[1] = LEFT;
-			m_pos.x = WIN_WIDTH*0.5-2;
+			m_pos.x = WIN_WIDTH*0.5 - 2.f;
 			m_dir.x *= -1;
 		}
 		else if (m_pos.x <= -WIN_WIDTH*0.5)
 		{
 			m_AniCnt[1] = RIGHT;
-			m_pos.x = 2-WIN_WIDTH*0.5;
+			m_pos.x = 2 - WIN_WIDTH*0.5;
 			m_dir.x *= -1;
 		}
 
@@ -186,7 +192,7 @@ void Rect::AddPosition(float tnow)
 		else if (m_pos.y <= -WIN_HEIGHT*0.5)
 		{
 			m_AniCnt[1] = UP;
-			m_pos.y = 2-WIN_HEIGHT*0.5;
+			m_pos.y = 2 - WIN_HEIGHT*0.5;
 			m_dir.y *= -1;
 		}
 	}
@@ -207,17 +213,15 @@ void Rect::AddPosition(float tnow)
 
 	if (m_colFlag == false)
 	{
-		m_pos.x += (m_dir.x*m_speed.x*(tnow*0.001));
-		m_pos.y += (m_dir.y*m_speed.y*(tnow*0.001));
+		m_pos.x += (m_dir.x*m_speed.x*(tnow*0.001f));
+		m_pos.y += (m_dir.y*m_speed.y*(tnow*0.001f));
 	}
 	else if (m_colFlag == true && m_state == OBJ_CHARACTER)
 	{
-			m_pos.x += back_excel.x*back_pos.x*(tnow*0.001);
-			m_pos.y += back_excel.y*back_pos.y*(tnow*0.001);
+		m_pos.x += (back_excel.x*back_pos.x*(tnow*0.001));
+		m_pos.y += (back_excel.y*back_pos.y*(tnow*0.001));
 	}
 }
-
-
 
 void Rect::SuperArmer(float cooltime, float time)
 {
@@ -243,15 +247,13 @@ double Rect::CalGauge()
 }
 
 
-Point Rect::GetPosition()
+Point* Rect::GetPosition()
 {
-	return m_pos;
+	return &m_pos;
 }
 
 void Rect::Delete()
 {
-	if (m_state == OBJ_CHARACTER)
-		std::cout << m_iLifeTime;
 	m_flag = false;
 	m_colFlag = false;
 	m_iLifeTime = 0;

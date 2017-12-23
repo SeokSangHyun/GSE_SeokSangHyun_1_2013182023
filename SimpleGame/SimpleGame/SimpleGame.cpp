@@ -88,12 +88,12 @@ void MouseMove(int x, int y)
 
 void KeyInput(unsigned char key, int x, int y)
 {
+	g_manager->KeyInput(key);
 	RenderScene();
 }
 
 void SpecialKeyInput(int key, int x, int y)
 {
-
 	RenderScene();
 }
 
